@@ -1028,6 +1028,12 @@ export default function App() {
             <p className="max-w-md leading-relaxed text-[11px] text-slate-500">
               本專案由開源愛好者與大老二迷合力打造，致敬台灣道地傳統棋牌。
             </p>
+            <p className="leading-relaxed text-[11px] text-slate-400 flex items-center gap-1">
+              <span>聯絡信箱：</span>
+              <a href="mailto:mesmerli@hotmail.com" className="text-amber-500/90 hover:text-amber-400 transition hover:underline font-mono">
+                mesmerli@hotmail.com
+              </a>
+            </p>
           </div>
 
           <div className="flex flex-col sm:items-end gap-2 text-xs text-slate-400">
