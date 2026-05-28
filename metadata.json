@@ -1,0 +1,6 @@
+{
+  "name": "台灣大老二 AI",
+  "description": "主打最流暢的對戰體驗與濃厚在地社群特色的台灣大老二撲克遊戲，內建 AI 智慧對戰、即時排行榜與每日挑戰活動！",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
