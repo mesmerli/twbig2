@@ -5,6 +5,7 @@ import { sortCards, evaluateHand, isValidMove, getAiPlay, getRankLabel } from '.
 import { gameAudio } from '../utils/audio';
 import CardView from './CardView';
 import { Play, RotateCcw, Volume2, VolumeX, Swords, Award, HelpCircle, CheckCircle } from 'lucide-react';
+import { TRANSLATIONS, Language } from '../utils/lang';
 
 interface BigTwoGameProps {
   userDisplayName: string;
@@ -13,6 +14,7 @@ interface BigTwoGameProps {
   onGameWin: (score: number, titleEarned?: string) => void;
   dailyChallengeActiveId?: string | null;
   onChallengeComplete?: (challengeId: string) => void;
+  currentLanguage?: Language;
 }
 
 // Dialog bubbles for funny Taiwanese card reactions
@@ -29,6 +31,19 @@ const TAIWAN_SLANG = [
   '不要急、不要慌，好戲在後頭！',
 ];
 
+const TAIWAN_SLANG_EN = [
+  'Spade 2! Always Spade 2!',
+  'Wait... are you serious playing this card?',
+  'What kind of trash play is that!',
+  'Passed... keeping your keys to secure a win?',
+  'Don\'t make me throw a quad! My hand is wild!',
+  'Time to order Boba tea, ice-free, half sugar.',
+  'This game is mine! I\'m buying everyone chicken cutlets next.',
+  'Damn, holding Club 3 and still squeezed like this.',
+  'Hold on, let me calculate. No rushing!',
+  'No rush, no panic, the best is yet to come!',
+];
+
 export default function BigTwoGame({
   userDisplayName,
   userTitle,
@@ -36,7 +51,11 @@ export default function BigTwoGame({
   onGameWin,
   dailyChallengeActiveId = null,
   onChallengeComplete,
+  currentLanguage = 'zh',
 }: BigTwoGameProps) {
+  const t = TRANSLATIONS[currentLanguage];
+  const slangs = currentLanguage === 'en' ? TAIWAN_SLANG_EN : TAIWAN_SLANG;
+
   // Configured sound toggle
   const [soundOn, setSoundOn] = useState(true);
 
@@ -118,9 +137,9 @@ export default function BigTwoGame({
     const initialPlayers: Player[] = [
       {
         id: 'p0',
-        name: userDisplayName || '神秘牌客',
+        name: userDisplayName || t.opponentMysticName,
         avatar: '🎴',
-        title: userTitle || '牌桌熟手',
+        title: userTitle || t.defaultTitle,
         cardsCount: 13,
         isAi: false,
         score: userScore,
@@ -129,9 +148,9 @@ export default function BigTwoGame({
       },
       {
         id: 'p1',
-        name: '東區大老二至尊',
+        name: t.opponent1Name,
         avatar: '🐯',
-        title: '老司機大師',
+        title: t.oppTitle1,
         cardsCount: 13,
         isAi: true,
         score: 9500,
@@ -140,9 +159,9 @@ export default function BigTwoGame({
       },
       {
         id: 'p2',
-        name: '高雄發哥',
+        name: t.opponent2Name,
         avatar: '🕶️',
-        title: '夜市賭聖',
+        title: t.oppTitle2,
         cardsCount: 13,
         isAi: true,
         score: 8700,
@@ -151,9 +170,9 @@ export default function BigTwoGame({
       },
       {
         id: 'p3',
-        name: '三重老皮',
+        name: t.opponent3Name,
         avatar: '🦊',
-        title: '萬華神算手',
+        title: t.oppTitle3,
         cardsCount: 13,
         isAi: true,
         score: 6400,
@@ -179,14 +198,14 @@ export default function BigTwoGame({
 
     setTurnIndex(starterIdx);
 
-    const starterName = initialPlayers[starterIdx].isAi ? initialPlayers[starterIdx].name : '你';
-    const initialLog = `💡 遊戲開局！由持有 [梅花 3] 的 [${starterName}] 先攻發行！`;
+    const starterName = initialPlayers[starterIdx].isAi ? initialPlayers[starterIdx].name : (currentLanguage === 'en' ? 'You' : '你');
+    const initialLog = t.gameInitNormalLog.replace('{name}', starterName);
     setPlayLogs([initialLog]);
 
     if (initialPlayers[starterIdx].isAi) {
-      triggerSpeech(initialPlayers[starterIdx].id, '哈哈，梅花三在我手，這盤主動權由我掌管！');
+      triggerSpeech(initialPlayers[starterIdx].id, t.gameSpeechAiMaster);
     } else {
-      triggerSpeech('p0', '看我起手神牌，準備受死吧！');
+      triggerSpeech('p0', t.gameSpeechHumanMaster);
     }
   };
 
@@ -195,8 +214,8 @@ export default function BigTwoGame({
     // Challenge setups (1 User vs 1 AI for focus residual solver)
     let pCards: Card[] = [];
     let oppCards: Card[] = [];
-    let title = '';
-    let desc = '';
+    let titleStr = '';
+    let descStr = '';
 
     if (challengeId === 'challenge_1') {
       pCards = [
@@ -208,8 +227,8 @@ export default function BigTwoGame({
         { id: 'opp_1', suit: Suit.SPADE, rank: 13 }, // ♠K
         { id: 'opp_2', suit: Suit.CLUB, rank: 13 },  // ♣K
       ];
-      title = '黑桃二的驚天逆襲';
-      desc = '今日對抗：高雄發哥（殘局守門員）';
+      titleStr = currentLanguage === 'en' ? "Spade Two's Comeback" : '黑桃二的驚天逆襲';
+      descStr = currentLanguage === 'en' ? 'Fa-Ge of Kaohsiung (End-Game Gatekeeper)' : '高雄發哥（殘局守門員）';
     } else if (challengeId === 'challenge_2') {
       pCards = [
         { id: 'play_4', suit: Suit.CLUB, rank: 3 },    // ♣3
@@ -220,8 +239,8 @@ export default function BigTwoGame({
         { id: 'opp_3', suit: Suit.HEART, rank: 12 }, // ♥Q
         { id: 'opp_4', suit: Suit.DIAMOND, rank: 12 }, // ♦Q
       ];
-      title = '梅花三的絕地反擊';
-      desc = '今日對抗：三重老皮（單挑新手考驗）';
+      titleStr = currentLanguage === 'en' ? "Club Three's Revenge" : '梅花三的絕地反擊';
+      descStr = currentLanguage === 'en' ? 'Old Pi of Sanchong (1v1 Rookie Trial)' : '三重老皮（單挑新手考驗）';
     } else {
       // challenge_3
       pCards = [
@@ -236,16 +255,16 @@ export default function BigTwoGame({
         { id: 'opp_8', suit: Suit.SPADE, rank: 10 }, // ♠10
         { id: 'opp_9', suit: Suit.CLUB, rank: 10 }, // ♣10
       ];
-      title = '鐵支破壞狂';
-      desc = '今日對抗：東區大老二至尊（高難度算牌局）';
+      titleStr = currentLanguage === 'en' ? 'Four-of-a-Kind Disruptor' : '鐵支破壞狂';
+      descStr = currentLanguage === 'en' ? 'Eastern Sovereign (High Difficulty Board)' : '東區大老二至尊（高難度算牌局）';
     }
 
     const testPlayers: Player[] = [
       {
         id: 'p0',
-        name: userDisplayName || '神秘牌客',
+        name: userDisplayName || t.opponentMysticName,
         avatar: '🎴',
-        title: userTitle || '殘局挑戰者',
+        title: userTitle || t.generalOpponentTag,
         cardsCount: pCards.length,
         isAi: false,
         score: userScore,
@@ -254,9 +273,9 @@ export default function BigTwoGame({
       },
       {
         id: 'p2',
-        name: challengeId === 'challenge_1' ? '高雄發哥' : challengeId === 'challenge_2' ? '三重老皮' : '東區大老二至尊',
+        name: challengeId === 'challenge_1' ? t.opponent2Name : challengeId === 'challenge_2' ? t.opponent3Name : t.opponent1Name,
         avatar: '🕶️',
-        title: '殘局考驗官',
+        title: t.generalExaminerTag,
         cardsCount: oppCards.length,
         isAi: true,
         score: 8900,
@@ -274,12 +293,12 @@ export default function BigTwoGame({
     setTurnIndex(0); // Player turns first to solve!
     
     setPlayLogs([
-      `⚔️ [殘局挑戰開始]：${title}`,
-      `📢 ${desc}`,
-      `💡 請謹慎出第一張牌，並想辦法在回合限制內擊敗守門員過關！`,
+      t.gamePuzzleStartLog.replace('{title}', titleStr),
+      t.gamePuzzleStartOppLabel.replace('{desc}', descStr),
+      t.gamePuzzleStartInfoLine,
     ]);
 
-    triggerSpeech('p0', '殘局已布好，看我如何一劍封喉！');
+    triggerSpeech('p0', t.gamePuzzleStartHumanSpeech);
   };
 
   // Auto trigger computer turns
@@ -321,7 +340,7 @@ export default function BigTwoGame({
             ...p,
             cards: remainingCards,
             cardsCount: remainingCards.length,
-            lastAction: `出牌: ${evaluation.type}`,
+            lastAction: currentLanguage === 'en' ? `Play: ${evaluation.type}` : `出牌: ${evaluation.type}`,
           };
         }
         return p;
@@ -335,19 +354,28 @@ export default function BigTwoGame({
       setIsFirstTurn(false);
 
       // Generate card description string
-      const cardsDesc = aiPlay.map((c) => `${c.suit}${getRankLabel(c.rank)}`).join(', ');
+      const cardsDesc = aiPlay.map((c) => {
+        if (currentLanguage === 'en') {
+          const sLabel = c.suit === Suit.DIAMOND ? '♦' : c.suit === Suit.CLUB ? '♣' : c.suit === Suit.HEART ? '♥' : '♠';
+          return `${sLabel}${getRankLabel(c.rank)}`;
+        }
+        return `${c.suit}${getRankLabel(c.rank)}`;
+      }).join(', ');
       
       const nextLogs = [
         ...playLogs,
-        `🥊 [${ai.name}] 出牌：[${evaluation.type}] (${cardsDesc})`,
+        t.gameLogPlayed
+          .replace('{name}', ai.name)
+          .replace('{type}', evaluation.type)
+          .replace('{cardsDesc}', cardsDesc),
       ];
       setPlayLogs(nextLogs);
 
       // Taiwanese reaction
       if (remainingCards.length === 1) {
-        triggerSpeech(ai.id, '各位鄉親！只剩一張！聽牌啦！');
+        triggerSpeech(ai.id, t.gameSpeechSingleCard);
       } else if (Math.random() > 0.6) {
-        const randomSlang = TAIWAN_SLANG[Math.floor(Math.random() * TAIWAN_SLANG.length)];
+        const randomSlang = slangs[Math.floor(Math.random() * slangs.length)];
         triggerSpeech(ai.id, randomSlang);
       }
 
@@ -367,7 +395,7 @@ export default function BigTwoGame({
       // AI Passes
       const updatedPlayers = players.map((p) => {
         if (p.id === ai.id) {
-          return { ...p, lastAction: '過牌 (Pass)' };
+          return { ...p, lastAction: currentLanguage === 'en' ? 'Pass' : '過牌 (Pass)' };
         }
         return p;
       });
@@ -378,10 +406,13 @@ export default function BigTwoGame({
       const nextPassesVal = consecutivePasses + 1;
       setConsecutivePasses(nextPassesVal);
 
-      const nextLogs = [...playLogs, `💨 [${ai.name}] 選擇過牌 (Pass)`];
+      const nextLogs = [
+        ...playLogs,
+        t.gameLogPassed.replace('{name}', ai.name)
+      ];
       setPlayLogs(nextLogs);
 
-      triggerSpeech(ai.id, '這手跟不起，過！下一位請～');
+      triggerSpeech(ai.id, currentLanguage === 'en' ? "Can't follow this, pass! Next player please~" : '這手跟不起，過！下一位請～');
 
       setPlayers(updatedPlayers);
 
@@ -393,8 +424,11 @@ export default function BigTwoGame({
         setConsecutivePasses(0);
         setTurnIndex(nextTurnIdx);
         
-        const leaderName = players[nextTurnIdx].isAi ? players[nextTurnIdx].name : '你';
-        setPlayLogs([...nextLogs, `🌟 所有牌桌玩家均過牌！[${leaderName}] 奪回出牌主動權！`]);
+        const leaderName = players[nextTurnIdx].isAi ? players[nextTurnIdx].name : (currentLanguage === 'en' ? 'You' : '你');
+        setPlayLogs([
+          ...nextLogs,
+          t.gameLogCleared.replace('{name}', leaderName)
+        ]);
       } else {
         const nextTurnIdx = (turnIndex + 1) % players.length;
         setTurnIndex(nextTurnIdx);
@@ -425,7 +459,7 @@ export default function BigTwoGame({
     const legal = isValidMove(selectedCards, desk, isFirstOfAll);
 
     if (!legal) {
-      triggerSpeech('p0', '這不符合台灣大老二牌型規範、或是點數不夠大喔！再想想？');
+      triggerSpeech('p0', currentLanguage === 'en' ? "This combo is not valid under Taiwan Big Two rules, or card points are not high enough! Try again." : '這不符合台灣大老二牌型規範、或是點數不夠大喔！再想想？');
       return;
     }
 
@@ -439,7 +473,7 @@ export default function BigTwoGame({
           ...p,
           cards: remainingCards,
           cardsCount: remainingCards.length,
-          lastAction: `出牌: ${hand.type}`,
+          lastAction: currentLanguage === 'en' ? `Play: ${hand.type}` : `出牌: ${hand.type}`,
         };
       }
       return p;
@@ -452,11 +486,24 @@ export default function BigTwoGame({
     setIsFirstTurn(false);
     setSelectedCards([]);
 
-    const cardsDesc = selectedCards.map((c) => `${c.suit}${getRankLabel(c.rank)}`).join(', ');
-    const nextLogs = [...playLogs, `🔥 你打出：[${hand.type}] (${cardsDesc})`];
+    const cardsDesc = selectedCards.map((c) => {
+      if (currentLanguage === 'en') {
+        const sLabel = c.suit === Suit.DIAMOND ? '♦' : c.suit === Suit.CLUB ? '♣' : c.suit === Suit.HEART ? '♥' : '♠';
+        return `${sLabel}${getRankLabel(c.rank)}`;
+      }
+      return `${c.suit}${getRankLabel(c.rank)}`;
+    }).join(', ');
+    
+    const nextLogs = [
+      ...playLogs,
+      t.gameLogPlayed
+        .replace('{name}', currentLanguage === 'en' ? 'You' : '你')
+        .replace('{type}', hand.type)
+        .replace('{cardsDesc}', cardsDesc)
+    ];
     setPlayLogs(nextLogs);
 
-    triggerSpeech('p0', `吃我的 ${hand.type} 啦！`);
+    triggerSpeech('p0', currentLanguage === 'en' ? `Take my ${hand.type}!` : `吃我的 ${hand.type} 啦！`);
 
     setPlayers(updatedPlayers);
 
@@ -469,7 +516,7 @@ export default function BigTwoGame({
           onChallengeComplete(dailyChallengeActiveId);
         }
         // Reward 150 points for solving challenge successfully!
-        onGameWin(150, '殘局破局大空頭');
+        onGameWin(150, currentLanguage === 'en' ? 'Endgame Solver' : '殘局破局大空頭');
       } else {
         setGameState('win');
         gameAudio.playWin();
@@ -478,7 +525,7 @@ export default function BigTwoGame({
         updatedPlayers.slice(1).forEach((ai) => {
           pointsEarned += ai.cardsCount * 10;
         });
-        onGameWin(pointsEarned, '東區大老二至尊');
+        onGameWin(pointsEarned, currentLanguage === 'en' ? 'Eastern Sovereign' : '東區大老二至尊');
       }
       return;
     }
@@ -491,13 +538,13 @@ export default function BigTwoGame({
   // User skips / passes turn
   const handlePass = () => {
     if (desk === null) {
-      triggerSpeech('p0', '現在是你拿主牌開局，不能過牌喔！打一張最小的也行！');
+      triggerSpeech('p0', currentLanguage === 'en' ? "You lead this turn! You cannot pass, choose a minimum card." : '現在是你拿主牌開局，不能過牌喔！打一張最小的也行！');
       return;
     }
 
     const updatedPlayers = players.map((p) => {
       if (p.id === 'p0') {
-        return { ...p, lastAction: '過牌 (Pass)' };
+        return { ...p, lastAction: currentLanguage === 'en' ? 'Pass' : '過牌 (Pass)' };
       }
       return p;
     });
@@ -507,10 +554,13 @@ export default function BigTwoGame({
     const nextPassesVal = consecutivePasses + 1;
     setConsecutivePasses(nextPassesVal);
 
-    const nextLogs = [...playLogs, '💨 你選擇過牌 (Pass)'];
+    const nextLogs = [
+      ...playLogs,
+      t.gameLogPassed.replace('{name}', currentLanguage === 'en' ? 'You' : '你')
+    ];
     setPlayLogs(nextLogs);
 
-    triggerSpeech('p0', '這把戰術迴避，大牌留著等下大合唱！');
+    triggerSpeech('p0', currentLanguage === 'en' ? "Strategic pass, holding onto big cards!" : '這把戰術迴避，大牌留著等下大合唱！');
 
     setPlayers(updatedPlayers);
 
@@ -522,8 +572,11 @@ export default function BigTwoGame({
       setConsecutivePasses(0);
       setTurnIndex(nextTurnIdx);
       
-      const leaderName = players[nextTurnIdx].isAi ? players[nextTurnIdx].name : '你';
-      setPlayLogs([...nextLogs, `🌟 所有牌桌玩家均過牌！[${leaderName}] 奪回出牌主動權！`]);
+      const leaderName = players[nextTurnIdx].isAi ? players[nextTurnIdx].name : (currentLanguage === 'en' ? 'You' : '你');
+      setPlayLogs([
+        ...nextLogs,
+        t.gameLogCleared.replace('{name}', leaderName)
+      ]);
     } else {
       const nextTurnIdx = (turnIndex + 1) % players.length;
       setTurnIndex(nextTurnIdx);
@@ -597,30 +650,29 @@ export default function BigTwoGame({
                   <span>♦</span>
                 </div>
                 <h4 className="text-xl font-bold text-white mb-2 font-sans">
-                  {dailyChallengeActiveId ? '準備好破解今日殘局了嗎？' : '精雕細琢・最台味的大老二對決'}
+                  {dailyChallengeActiveId ? (currentLanguage === 'en' ? "Ready to solve today's puzzle?" : "準備好破解今日殘局了嗎？") : (currentLanguage === 'en' ? "Exquisite & Authentic Taiwan Big Two" : "精雕細琢・最台味的大老二對決")}
                 </h4>
-                <p className="text-sm text-slate-300 mb-6 leading-relaxed">
+                <p className="text-sm text-slate-300 mb-6 leading-relaxed font-sans">
                   {dailyChallengeActiveId 
-                    ? '每日精選死局，測試你的智謀、邏輯算牌，並用精準的操作解鎖神級頭銜！'
-                    : '極致流暢的卡牌互動、秒級 AIHeuristics 反應，融合道地爆笑對白，挑戰你的大老二勝率極限！'}
+                    ? (currentLanguage === 'en' ? "A hand-picked daily endgame scenario designed to test your tactical card counting skills. Crack it to win bonus points!" : "每日精選死局，測試你的智謀、邏輯算牌，並用精準的操作解鎖神級頭銜！")
+                    : (currentLanguage === 'en' ? "Fluent card dragging, extreme heuristic decision-tree AI, and hilarious localized poker slangs. Test your limits now!" : "極致流暢的卡牌互動、秒級 AIHeuristics 反應，融合道地爆笑對白，挑戰你的大老二勝率極限！")}
                 </p>
                 <button
                   onClick={dailyChallengeActiveId ? () => initChallengeGame(dailyChallengeActiveId) : initNormalGame}
                   className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 rounded-xl text-white font-semibold shadow-lg shadow-emerald-500/20 transition-all text-sm w-full justify-center md:w-auto mx-auto cursor-pointer"
                 >
                   <Play size={16} />
-                  {dailyChallengeActiveId ? '開始破解殘局' : '立即洗牌開局'}
+                  {dailyChallengeActiveId ? (currentLanguage === 'en' ? "Start Solving Puzzle" : "開始破解殘局") : (currentLanguage === 'en' ? "Shuffle and Play" : "立即洗牌開局")}
                 </button>
               </motion.div>
             </div>
           )}
-
           {/* Render victory or defeat screen overlying game table */}
           {(gameState === 'win' || gameState === 'lose' || gameState === 'solved') && (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/90 backdrop-blur-md z-10 p-6 text-center">
               <motion.div
-                initial={{ scale: 0.8, fillOpacity: 0 }}
-                animate={{ scale: 1, fillOpacity: 1 }}
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
                 className="max-w-md p-6 bg-slate-900 border border-emerald-500/30 rounded-2xl shadow-2xl"
               >
                 {gameState === 'win' && (
@@ -629,44 +681,44 @@ export default function BigTwoGame({
                       👑
                     </div>
                     <h3 className="text-2xl font-bold text-yellow-400 font-sans mb-2">
-                      恭喜獲勝！你贏了！
+                      {currentLanguage === 'en' ? 'Victory! You Won!' : '恭喜獲勝！你贏了！'}
                     </h3>
                     <p className="text-sm text-slate-300 mb-6">
-                      這手牌打得簡直是完美無缺！成功擊垮東區大老二至尊與其他牌友。
+                      {currentLanguage === 'en' ? 'Outstanding play! You successfully cleared all cards and defeated everyone at the table.' : '這手牌打得簡直是完美無缺！成功擊垮東區大老二至尊與其他牌友。'}
                     </p>
                     <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-3 mb-6 text-emerald-300 text-xs font-mono">
-                      ✨ 積分獎勵：+150 積分 | 解鎖成就：【西門町牌神】
+                      ✨ {currentLanguage === 'en' ? 'Score Reward: +150 MMR | Badge: [Wanhua Card Sage]' : '積分獎勵：+150 積分 | 解鎖成就：【西門町牌神】'}
                     </div>
                   </>
                 )}
 
                 {gameState === 'solved' && (
                   <>
-                    <div className="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center text-4xl mx-auto mb-4 animate-ping">
-                      <CheckCircle size={40} />
+                    <div className="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center text-4xl mx-auto mb-4 animate-pulse">
+                      <CheckCircle size={40} className="mx-auto" />
                     </div>
                     <h3 className="text-2xl font-bold text-emerald-400 font-sans mb-2">
-                      殘局挑戰成功！
+                      {t.gameResultTitleWin}
                     </h3>
-                    <p className="text-sm text-slate-300 mb-6">
-                      完美的下牌邏輯，成功突破守門員防線！恭喜你拿下了今日最高榮譽。
+                    <p className="text-sm text-slate-300 mb-6 font-sans">
+                      {t.gameResultBodyWin}
                     </p>
                     <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-3 mb-6 text-emerald-300 text-xs font-mono">
-                      🏅 殘局特訓包解鎖：+150 積分 | 頭銜更新：【大老二神算大老】
+                      🏅 {currentLanguage === 'en' ? 'Special Pack Unlocked: +150 MMR | Rank: [End-game Overlord]' : '殘局特訓包解鎖：+150 積分 | 頭銜更新：【大老二神算大老】'}
                     </div>
                   </>
                 )}
 
                 {gameState === 'lose' && (
                   <>
-                    <div className="w-16 h-16 bg-red-500/20 text-red-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-4">
+                    <div className="w-16 h-16 bg-red-500/20 text-red-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-4 animate-pulse">
                       💀
                     </div>
                     <h3 className="text-2xl font-bold text-red-500 font-sans mb-2">
-                      可惜了，再接再厲！
+                      {t.gameResultTitleLose}
                     </h3>
-                    <p className="text-sm text-slate-300 mb-6">
-                      AI 在計算方面展現了無情威力。別氣餒，大老二世界成敗自古有之，深吸一口氣重新算牌！
+                    <p className="text-sm text-slate-300 mb-6 font-sans">
+                      {t.gameResultBodyLose}
                     </p>
                   </>
                 )}
@@ -674,15 +726,15 @@ export default function BigTwoGame({
                 <div className="flex gap-3 justify-center">
                   <button
                     onClick={dailyChallengeActiveId ? () => initChallengeGame(dailyChallengeActiveId) : initNormalGame}
-                    className="px-5 py-2.5 bg-emerald-550 hover:bg-emerald-500 text-white font-medium rounded-xl text-xs transition-all border border-emerald-400/20 cursor-pointer"
+                    className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-xl text-xs transition-colors border border-emerald-400/20 cursor-pointer"
                   >
-                    再玩一局
+                    {dailyChallengeActiveId ? (currentLanguage === 'en' ? 'Try Again' : '重整挑戰') : t.gamePlayAgain}
                   </button>
                   <button
                     onClick={() => setGameState('idle')}
-                    className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-xl text-xs transition-all border border-slate-700 cursor-pointer"
+                    className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-xl text-xs transition-colors border border-slate-700 cursor-pointer"
                   >
-                    返回桌面
+                    {currentLanguage === 'en' ? 'Return Table' : '返回桌面'}
                   </button>
                 </div>
               </motion.div>
@@ -703,7 +755,9 @@ export default function BigTwoGame({
                       <span className="text-base">{players[2].avatar}</span>
                       <div className="text-left text-xs">
                         <div className="font-bold max-w-[80px] truncate">{players[2].name}</div>
-                        <div className="text-[10px] text-slate-400">剩餘 {players[2].cardsCount} 張</div>
+                        <div className="text-[10px] text-slate-400">
+                          {currentLanguage === 'en' ? `${players[2].cardsCount} Left` : `剩餘 ${players[2].cardsCount} 張`}
+                        </div>
                       </div>
                     </div>
 
@@ -738,7 +792,7 @@ export default function BigTwoGame({
                         <span className="text-3xl mb-1">{players[3].avatar}</span>
                         <div className="font-bold text-xs max-w-[88px] truncate">{players[3].name}</div>
                         <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 mt-1">
-                          {players[3].cardsCount} 張牌
+                          {currentLanguage === 'en' ? `${players[3].cardsCount} Cards` : `${players[3].cardsCount} 張牌`}
                         </span>
                       </div>
 
@@ -765,7 +819,7 @@ export default function BigTwoGame({
                         <span className="text-3xl mb-1">{players[1].avatar}</span>
                         <div className="font-bold text-xs max-w-[88px] truncate">{players[1].name}</div>
                         <span className="text-[10px] bg-red-500/10 text-red-400 px-1 rounded-full mt-1 font-mono">
-                          殘局剩 {players[1].cardsCount} 張
+                          {currentLanguage === 'en' ? `${players[1].cardsCount} Left` : `殘局剩 ${players[1].cardsCount} 張`}
                         </span>
                       </div>
                       
@@ -791,14 +845,14 @@ export default function BigTwoGame({
                   {isAiThinking && (
                     <div className="absolute top-2 right-2 flex items-center gap-1.5 text-xs text-amber-300 font-sans px-2 py-0.5 rounded bg-amber-500/10 animate-pulse">
                       <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-ping" />
-                      對手思考中...
+                      {currentLanguage === 'en' ? 'Thinking...' : '對手思考中...'}
                     </div>
                   )}
 
                   {desk ? (
                     <div className="flex flex-col items-center gap-2">
                       <div className="text-[11px] font-mono font-semibold tracking-wider text-emerald-400 uppercase bg-emerald-500/10 px-2 py-0.5 rounded-full mb-1">
-                        ♠ 最強壓案：{desk.type}
+                        {currentLanguage === 'en' ? `Current Lead: ${desk.type}` : `最強壓案：${desk.type}`}
                       </div>
                       
                       {/* Cards visual layout in center */}
@@ -813,11 +867,11 @@ export default function BigTwoGame({
                       <HelpCircle size={32} className="mx-auto text-emerald-600/60 mb-1.5" />
                       <div className="text-slate-400 text-xs font-sans">
                         {consecutivePasses > 0 
-                          ? `已連續 ${consecutivePasses} 人過牌` 
-                          : '牌桌目前空空如也'}
+                          ? (currentLanguage === 'en' ? `${consecutivePasses} Consecutive Passes` : `已連續 ${consecutivePasses} 人過牌`) 
+                          : (currentLanguage === 'en' ? 'Table is currently empty' : '牌桌目前空空如也')}
                       </div>
                       <div className="text-[10px] text-emerald-500/40 mt-1 font-sans">
-                        任意出牌主導權在：{currentActivePlayer?.isAi ? currentActivePlayer.name : '你'}
+                        {currentLanguage === 'en' ? 'Lead Turn: ' : '任意出牌主導權在：'}{currentActivePlayer?.isAi ? currentActivePlayer.name : (currentLanguage === 'en' ? 'You' : '你')}
                       </div>
                     </div>
                   )}
@@ -833,7 +887,7 @@ export default function BigTwoGame({
                         <span className="text-3xl mb-1">{players[1].avatar}</span>
                         <div className="font-bold text-xs max-w-[88px] truncate">{players[1].name}</div>
                         <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 mt-1">
-                          {players[1].cardsCount} 張牌
+                          {currentLanguage === 'en' ? `${players[1].cardsCount} Cards` : `${players[1].cardsCount} 張牌`}
                         </span>
                       </div>
 
@@ -854,7 +908,7 @@ export default function BigTwoGame({
                   ) : (
                     // In challenge we can keep an empty element for perfect visual balance
                     <div className="text-xs text-slate-500 border border-slate-800/10 p-3 rounded-lg bg-slate-950/20 w-[90px]">
-                      🤝 單挑局
+                      {t.game1v1Tag}
                     </div>
                   )}
                 </div>
@@ -869,7 +923,7 @@ export default function BigTwoGame({
                   <div className="flex items-center gap-2">
                     <div className={`h-2.5 w-2.5 rounded-full ${turnIndex === 0 ? 'bg-amber-400 animate-ping' : 'bg-slate-700'}`} />
                     <span className="text-xs font-sans font-medium text-slate-300">
-                      {turnIndex === 0 ? '💡 已輪到你出手！選擇符合牌型的組合，點擊「出牌」' : '⏳ 對手正在組織策略，靜靜等待下一輪...'}
+                      {turnIndex === 0 ? t.gameTurnMyTurn : t.gameTurnOppTurn}
                     </span>
                   </div>
 
@@ -905,7 +959,7 @@ export default function BigTwoGame({
                           : 'bg-slate-800 cursor-not-allowed text-slate-500 border border-slate-750'
                       }`}
                     >
-                      🚀 出牌
+                      {t.gameBtnPlay}
                     </button>
                     
                     <button
@@ -917,7 +971,7 @@ export default function BigTwoGame({
                           : 'bg-slate-900 cursor-not-allowed text-slate-600 border-slate-800'
                       }`}
                     >
-                      💨 過牌 (Pass)
+                      {t.gameBtnPass}
                     </button>
 
                     <button
@@ -927,7 +981,7 @@ export default function BigTwoGame({
                         selectedCards.length > 0 ? 'text-rose-400 hover:bg-rose-500/10' : 'text-slate-600 cursor-not-allowed'
                       }`}
                     >
-                      重選
+                      {t.gameBtnReset}
                     </button>
                   </div>
 
@@ -945,7 +999,7 @@ export default function BigTwoGame({
           {/* Logs container header */}
           <div>
             <div className="text-xs font-bold text-slate-400 font-sans tracking-wide uppercase px-2 py-1 flex items-center justify-between border-b border-slate-800 pb-2 mb-2">
-              <span>戰局即時日誌</span>
+              <span>{t.gameLogHeader}</span>
               <span className="h-1.5 w-1.5 bg-red-500 rounded-full animate-pulse" />
             </div>
 
@@ -954,14 +1008,14 @@ export default function BigTwoGame({
               className="space-y-2 max-h-[300px] overflow-y-auto pr-1 text-[11px] font-mono leading-relaxed"
             >
               {playLogs.length === 0 ? (
-                <div className="text-slate-500 text-center py-8">無最新對戰記錄</div>
+                <div className="text-slate-500 text-center py-8">{t.gameEmptyLog}</div>
               ) : (
                 playLogs.map((log, index) => {
                   let logColor = 'text-slate-400';
-                  if (log.includes('你打出')) logColor = 'text-emerald-400 font-semibold';
-                  if (log.includes('過牌')) logColor = 'text-slate-500';
-                  if (log.includes('出牌')) logColor = 'text-teal-300';
-                  if (log.includes('!')) logColor = 'text-amber-400';
+                  if (log.includes('你打出') || log.includes('You played') || log.includes('打出')) logColor = 'text-emerald-400 font-semibold';
+                  if (log.includes('過牌') || log.includes('passed') || log.includes('Pass')) logColor = 'text-slate-500';
+                  if (log.includes('出牌') || log.includes('played') || log.includes('Play')) logColor = 'text-teal-300';
+                  if (log.includes('!') || log.includes('⚔️') || log.includes('🏆') || log.includes('👑')) logColor = 'text-amber-400';
 
                   return (
                     <div key={index} className={`p-1 rounded bg-slate-950/20 border-l border-slate-800 pl-2 ${logColor}`}>
@@ -976,30 +1030,28 @@ export default function BigTwoGame({
           {/* User local stats panel */}
           <div className="border-t border-slate-850 pt-3 mt-3 bg-slate-950/40 p-2.5 rounded-lg">
             <div className="text-xs font-bold text-slate-300 font-sans mb-1.5 flex items-center gap-1.5">
-              💡 我的桌邊屬性
+              {t.gameMyProfile}
             </div>
             
             <div className="grid grid-cols-2 gap-2 text-center">
               <div className="bg-slate-900 p-1.5 rounded border border-slate-800">
-                <div className="text-[10px] text-slate-400">目前暱稱</div>
-                <div className="text-xs font-bold text-white truncate max-w-full">{userDisplayName || '牌桌小白'}</div>
+                <div className="text-[10px] text-slate-400">{t.gameProfileNickname}</div>
+                <div className="text-xs font-bold text-white truncate max-w-full">{userDisplayName || (currentLanguage === 'en' ? 'Sovereign Player' : '牌桌小白')}</div>
               </div>
               
               <div className="bg-slate-900 p-1.5 rounded border border-slate-800">
-                <div className="text-[10px] text-slate-400">當前稱號</div>
-                <div className="text-xs font-bold text-amber-400 truncate max-w-full">{userTitle || '初心者'}</div>
+                <div className="text-[10px] text-slate-400">{t.gameProfileTitle}</div>
+                <div className="text-xs font-bold text-amber-400 truncate max-w-full">{userTitle || (currentLanguage === 'en' ? 'Novice' : '初心者')}</div>
               </div>
             </div>
 
             <p className="text-[10px] text-slate-500 mt-2 font-sans leading-normal">
-              透過獲勝或解答精選殘局，提升排位積分，將直接回傳至全網排行榜！
+              {t.gameProfileTip}
             </p>
           </div>
 
         </div>
-
       </div>
-
     </div>
   );
 }

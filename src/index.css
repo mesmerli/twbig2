@@ -9,6 +9,14 @@
   --color-brand-active: #10b981;
 }
 
+html, body {
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 100vh;
+  scroll-behavior: smooth;
+  background-color: #020617; /* matches slate-950 */
+}
+
 /* Custom card fan styles and smooth scrollbars */
 /* Firefox Scrollbar Support */
 * {

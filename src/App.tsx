@@ -20,19 +20,59 @@ import {
   Medal,
   Download,
   Share2,
+  Globe,
 } from 'lucide-react';
 
 import { Card, LeaderboardEntry, DailyChallenge } from './types';
 import { INITIAL_LEADERBOARD, DAILY_CHALLENGES, LOCAL_TITLES } from './data/mockData';
 import BigTwoGame from './components/BigTwoGame';
+import { TRANSLATIONS, Language } from './utils/lang';
 
 export default function App() {
   // Localization setup & personal identity
-  const [userDisplayName, setUserDisplayName] = useState('萬華牌王阿強');
-  const [userTitle, setUserTitle] = useState('東區大老二至尊');
+  const [lang, setLang] = useState<Language>(() => (localStorage.getItem('twbig2_lang') as Language) || 'zh');
+  const t = TRANSLATIONS[lang];
+
+  const [userDisplayName, setUserDisplayName] = useState(() => lang === 'en' ? 'Master Dragon' : '萬華牌王阿強');
+  const [userTitle, setUserTitle] = useState(() => lang === 'en' ? 'Eastern Sovereign' : '東區大老二至尊');
   const [userScore, setUserScore] = useState(4800);
-  const [tempName, setTempName] = useState('萬華牌王阿強');
-  const [selectedLocalTitle, setSelectedLocalTitle] = useState('萬華牌局一陣風');
+  const [tempName, setTempName] = useState(() => lang === 'en' ? 'Master Dragon' : '萬華牌王阿強');
+  const [selectedLocalTitle, setSelectedLocalTitle] = useState(() => lang === 'en' ? 'Wanhua Wind Rider' : '萬華牌局一陣風');
+
+  const toggleLanguage = () => {
+    const nextLang: Language = lang === 'zh' ? 'en' : 'zh';
+    setLang(nextLang);
+    localStorage.setItem('twbig2_lang', nextLang);
+  };
+
+  useEffect(() => {
+    const defaultsZh = ['萬華牌王阿強', '東區大老二至尊', '萬華牌局一陣風'];
+    const defaultsEn = ['Master Dragon', 'Eastern Sovereign', 'Wanhua Wind Rider'];
+    
+    if (lang === 'en') {
+      if (defaultsZh.includes(userDisplayName)) {
+        setUserDisplayName('Master Dragon');
+        setTempName('Master Dragon');
+      }
+      if (defaultsZh.includes(userTitle)) {
+        setUserTitle('Eastern Sovereign');
+      }
+      if (defaultsZh.includes(selectedLocalTitle)) {
+        setSelectedLocalTitle('Wanhua Wind Rider');
+      }
+    } else {
+      if (defaultsEn.includes(userDisplayName)) {
+        setUserDisplayName('萬華牌王阿強');
+        setTempName('萬華牌王阿強');
+      }
+      if (defaultsEn.includes(userTitle)) {
+        setUserTitle('東區大老二至尊');
+      }
+      if (defaultsEn.includes(selectedLocalTitle)) {
+        setSelectedLocalTitle('萬華牌局一陣風');
+      }
+    }
+  }, [lang]);
 
   // Play Mode: 'official' (the embedded website) or 'local' (hand puzzles / web trial React engine)
   const [playMode, setPlayMode] = useState<'official' | 'local'>('official');
@@ -50,8 +90,10 @@ export default function App() {
   const handleShare = async () => {
     const shareUrl = 'https://mesmerli.github.io/twbig2/';
     const shareData = {
-      title: '台灣大老二 AI - 全台最強對戰平台',
-      text: '快來挑戰全台最強的台灣大老二 AI 殘局與對戰 Demo！網頁版免下載，極限牌型搜尋高精度推理！',
+      title: lang === 'en' ? 'Taiwan Big Two AI - Ultimate Card Duel' : '台灣大老二 AI - 全台最強對戰平台',
+      text: lang === 'en' 
+        ? 'Challenge the ultimate neural network-based Taiwan Big Two AI simulator! Play online instantly.'
+        : '快來挑戰全台最強的台灣大老二 AI 殘局與對戰 Demo！網頁版免下載，極限牌型搜尋高精度推理！',
       url: shareUrl,
     };
 
@@ -163,36 +205,36 @@ export default function App() {
       <div className="absolute top-[800px] left-1/4 w-[500px] h-[500px] bg-amber-500/5 rounded-full blur-[120px] pointer-events-none" />
 
       {/* Header Segment */}
-      <header className="sticky top-4 mx-auto max-w-7xl z-50 px-4 sm:px-6 lg:px-8">
+      <header className="fixed top-4 left-0 right-0 mx-auto max-w-7xl z-50 px-4 sm:px-6 lg:px-8">
         <div className="bg-slate-900/80 backdrop-blur-md border border-slate-800 p-4 rounded-2xl flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img 
               src="https://raw.githubusercontent.com/mesmerli/taiwan-big-two-ai/main/src/assets/logo.png" 
-              alt="台灣大老二 AI" 
+              alt={t.brandName} 
               className="w-10 h-10 object-contain rounded-lg drop-shadow-[0_0_10px_rgba(245,158,11,0.4)]"
               referrerPolicy="no-referrer"
             />
             <div>
-              <span className="font-display font-extrabold text-white text-base tracking-wider block">台灣大老二 AI</span>
-              <span className="text-[10px] text-slate-400 font-mono block -mt-1">Taiwan Big Two AI - 全台最強對戰平台</span>
+              <span className="font-display font-extrabold text-white text-base tracking-wider block">{t.brandName}</span>
+              <span className="text-[10px] text-slate-400 font-mono hidden xl:block -mt-1">{t.brandSub}</span>
             </div>
           </div>
 
-          <nav className="hidden md:flex items-center gap-4 lg:gap-6">
-            <a href="#features" className="text-xs font-semibold tracking-wider text-slate-300 hover:text-amber-400 transition-colors uppercase">特色亮點</a>
-            <a href="#download" className="text-xs font-semibold tracking-wider text-sky-400 hover:text-amber-400 transition-colors uppercase">微軟商店</a>
-            <a href="#challenges" className="text-xs font-semibold tracking-wider text-slate-300 hover:text-amber-400 transition-colors uppercase">殘局挑戰</a>
-            <a href="#demo" className="text-xs font-semibold tracking-wider text-slate-300 hover:text-amber-400 transition-colors uppercase">對抗 Demo</a>
-            <a href="#leaderboard" className="text-xs font-semibold tracking-wider text-slate-300 hover:text-amber-400 transition-colors uppercase">排行榜</a>
-            <a href="#tech" className="text-xs font-semibold tracking-wider text-slate-300 hover:text-amber-400 transition-colors uppercase">演算法</a>
+          <nav className="hidden lg:flex items-center gap-3 xl:gap-5">
+            <a href="#features" className="text-[11px] xl:text-xs font-semibold tracking-normal xl:tracking-wider text-slate-300 hover:text-amber-400 transition-colors uppercase">{t.navFeatures}</a>
+            <a href="#download" className="text-[11px] xl:text-xs font-semibold tracking-normal xl:tracking-wider text-sky-400 hover:text-amber-400 transition-colors uppercase">{t.navMsStore}</a>
+            <a href="#challenges" className="text-[11px] xl:text-xs font-semibold tracking-normal xl:tracking-wider text-slate-300 hover:text-amber-400 transition-colors uppercase">{t.navChallenges}</a>
+            <a href="#demo" className="text-[11px] xl:text-xs font-semibold tracking-normal xl:tracking-wider text-slate-300 hover:text-amber-400 transition-colors uppercase">{t.navDemo}</a>
+            <a href="#leaderboard" className="text-[11px] xl:text-xs font-semibold tracking-normal xl:tracking-wider text-slate-300 hover:text-amber-400 transition-colors uppercase">{t.navLeaderboard}</a>
+            <a href="#tech" className="text-[11px] xl:text-xs font-semibold tracking-normal xl:tracking-wider text-slate-300 hover:text-amber-400 transition-colors uppercase">{t.navAlgorithm}</a>
           </nav>
 
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-2 xl:gap-3">
             <a
               href="https://apps.microsoft.com/detail/9PM1S8GKBLK9?hl=zh-tw&gl=TW&ocid=pdpshare"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-blue-950/40 hover:bg-blue-900/60 text-blue-200 border border-blue-800/40 transition"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] xl:text-xs font-semibold bg-blue-950/40 hover:bg-blue-900/60 text-blue-200 border border-blue-800/40 transition shrink-0"
             >
               <span className="grid grid-cols-2 gap-[1px] w-2.5 h-2.5">
                 <span className="bg-[#f25022] rounded-[0.5px]" />
@@ -200,81 +242,97 @@ export default function App() {
                 <span className="bg-[#00a4ef] rounded-[0.5px]" />
                 <span className="bg-[#ffb900] rounded-[0.5px]" />
               </span>
-              微軟商店下載
+              {t.btnMsStoreDownload}
             </a>
+            <button
+              onClick={toggleLanguage}
+              className="flex items-center justify-center p-2.5 rounded-full bg-slate-800/80 hover:bg-slate-700/80 text-slate-200 hover:text-amber-400 border border-slate-700 hover:border-slate-600 transition cursor-pointer"
+              title={lang === 'zh' ? 'Switch to English / 切換至英文' : '切換至繁體中文 / Switch to Chinese'}
+            >
+              <Globe size={14} className="text-amber-400" />
+            </button>
             <button
               id="desktop-share-btn"
               onClick={handleShare}
               className="flex items-center justify-center p-2.5 rounded-full bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 hover:border-amber-500/50 transition cursor-pointer"
-              title="分享此網站給朋友"
+              title={t.btnShareTooltip}
             >
               <Share2 size={14} />
             </button>
             <button
               onClick={() => scrollToDemo('official')}
-              className="bg-amber-500 hover:bg-amber-400 text-slate-950 px-6 py-2 rounded-full font-bold transition-all shadow-lg text-xs cursor-pointer"
+              className="bg-amber-500 hover:bg-amber-400 text-slate-950 px-5 py-2 rounded-full font-bold transition-all shadow-lg text-[11px] xl:text-xs cursor-pointer shrink-0"
             >
-              立即開局
+              {t.btnPlayNowHeader}
             </button>
           </div>
 
           {/* Mobile menu triggers */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-slate-400 hover:text-white"
-          >
-            <div className="space-y-1.5">
-              <span className={`block w-6 h-0.5 bg-current transition-transform ${mobileMenuOpen ? 'rotate-45 translate-y-2' : ''}`} />
-              <span className={`block w-6 h-0.5 bg-current transition-opacity ${mobileMenuOpen ? 'opacity-0' : ''}`} />
-              <span className={`block w-6 h-0.5 bg-current transition-transform ${mobileMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
-            </div>
-          </button>
+          <div className="flex lg:hidden items-center gap-2">
+            <button
+              onClick={toggleLanguage}
+              className="flex items-center justify-center p-2 rounded-full bg-slate-800/80 text-slate-200 border border-slate-700 text-[10px] font-bold"
+              title="Toggle Language / 切換語言"
+            >
+              <Globe size={14} className="text-amber-400" />
+            </button>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 text-slate-400 hover:text-white"
+            >
+              <div className="space-y-1.5">
+                <span className={`block w-6 h-0.5 bg-current transition-transform ${mobileMenuOpen ? 'rotate-45 translate-y-2' : ''}`} />
+                <span className={`block w-6 h-0.5 bg-current transition-opacity ${mobileMenuOpen ? 'opacity-0' : ''}`} />
+                <span className={`block w-6 h-0.5 bg-current transition-transform ${mobileMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
+              </div>
+            </button>
+          </div>
         </div>
 
         {/* Mobile menu list */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-[#070e17] border-b border-slate-800 px-4 py-4 space-y-3">
+          <div className="lg:hidden bg-[#070e17] border-b border-slate-800 px-4 py-4 space-y-3">
             <a
               href="#features"
               onClick={() => setMobileMenuOpen(false)}
               className="block text-sm text-slate-300 py-1"
             >
-              特色亮點
+              {t.navFeatures}
             </a>
             <a
               href="#download"
               onClick={() => setMobileMenuOpen(false)}
               className="block text-sm text-blue-450 py-1 font-semibold"
             >
-              微軟商店原生下載
+              {t.navMsStore}
             </a>
             <a
               href="#challenges"
               onClick={() => setMobileMenuOpen(false)}
               className="block text-sm text-slate-300 py-1"
             >
-              每日殘局挑戰
+              {t.navChallenges}
             </a>
             <a
               href="#demo"
               onClick={() => setMobileMenuOpen(false)}
               className="block text-sm text-slate-300 py-1"
             >
-              流暢對抗 Demo
+              {t.navDemo}
             </a>
             <a
               href="#leaderboard"
               onClick={() => setMobileMenuOpen(false)}
               className="block text-sm text-slate-300 py-1"
             >
-              王牌排行榜
+              {t.navLeaderboard}
             </a>
             <a
               href="#tech"
               onClick={() => setMobileMenuOpen(false)}
               className="block text-sm text-slate-300 py-1"
             >
-              演算法指南
+              {t.navAlgorithm}
             </a>
             <div className="pt-2 flex flex-col gap-2">
               <a
@@ -289,7 +347,7 @@ export default function App() {
                   <span className="bg-[#00a4ef] rounded-[0.5px]" />
                   <span className="bg-[#ffb900] rounded-[0.5px]" />
                 </span>
-                微軟商店官方下載
+                {t.btnMsStoreDownload}
               </a>
               <button
                 id="mobile-share-btn"
@@ -317,7 +375,7 @@ export default function App() {
       </header>
 
       {/* Hero Intro Section and Main Bento Header Layout */}
-      <section className="relative pt-12 pb-16 md:py-20 overflow-hidden border-b border-slate-900">
+      <section className="relative pt-28 pb-16 md:pt-36 md:pb-20 overflow-hidden border-b border-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
             
@@ -331,34 +389,34 @@ export default function App() {
               <div>
                 <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full mb-6">
                   <Sparkles size={14} className="text-amber-400" />
-                  <span className="text-xs font-semibold text-amber-300 font-display">台味撲克 × 頂級 decision AI</span>
+                  <span className="text-xs font-semibold text-amber-300 font-display">{t.heroSubtitle}</span>
                 </div>
 
                 <h1 className="text-4xl sm:text-5xl md:text-6xl font-display font-extrabold text-white tracking-tight leading-[1.1] mb-6">
-                  極致流暢 <br />
+                  {t.heroTitlePart1} <br />
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-emerald-400 to-amber-500">
-                    台灣大老二 AI
+                    {t.heroTitlePart2}
                   </span>
                 </h1>
 
                 <p className="text-sm sm:text-base text-slate-300 max-w-xl mb-8 leading-relaxed">
-                  主打最深度的決策演算法與微秒級流暢出牌體驗。首創結合多元大模型 AI 牌風性格，賽後提供專屬 AI 評價反饋與互動問答，帶你體驗原汁原味卻智商爆棚的台灣大老二魅力！
+                  {t.heroDesc}
                 </p>
               </div>
 
               {/* Stats badges inside Hero */}
               <div className="grid grid-cols-3 gap-4 w-full max-w-lg mb-8 bg-slate-950/60 p-4 rounded-xl border border-slate-800/80 backdrop-blur-sm">
                 <div>
-                  <div className="text-2xl font-bold font-display text-white">15<span className="text-amber-500 text-sm">ms</span></div>
-                  <div className="text-[10px] text-slate-400 mt-1">AI 毫秒決策延遲</div>
+                  <div className="text-2xl font-bold font-display text-white">{t.statBadge1Val}<span className="text-amber-500 text-sm">{t.statBadge1Unit}</span></div>
+                  <div className="text-[10px] text-slate-400 mt-1">{t.statBadge1Lbl}</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold font-display text-white">100<span className="text-amber-500 text-sm">%</span></div>
-                  <div className="text-[10px] text-slate-400 mt-1">台灣大老二規則覆蓋</div>
+                  <div className="text-2xl font-bold font-display text-white">{t.statBadge2Val}<span className="text-amber-500 text-sm">{t.statBadge2Unit}</span></div>
+                  <div className="text-[10px] text-slate-400 mt-1">{t.statBadge2Lbl}</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold font-display text-white">LLM</div>
-                  <div className="text-[10px] text-slate-400 mt-1">AI 賽後點評與問答</div>
+                  <div className="text-2xl font-bold font-display text-white">{t.statBadge3Val}<span className="text-amber-500 text-sm">{t.statBadge3Unit}</span></div>
+                  <div className="text-[10px] text-slate-400 mt-1">{t.statBadge3Lbl}</div>
                 </div>
               </div>
 
@@ -368,7 +426,7 @@ export default function App() {
                   onClick={() => scrollToDemo('official')}
                   className="px-6 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs shadow-lg shadow-amber-500/10 hover:shadow-amber-500/20 active:scale-95 transition text-center cursor-pointer whitespace-nowrap"
                 >
-                  開始線上試玩
+                  {t.btnStartWebPlay}
                 </button>
                 <a
                   href="https://apps.microsoft.com/detail/9PM1S8GKBLK9?hl=zh-tw&gl=TW&ocid=pdpshare"
@@ -382,7 +440,7 @@ export default function App() {
                     <span className="bg-[#00a4ef] rounded-[0.5px]" />
                     <span className="bg-[#ffb900] rounded-[0.5px]" />
                   </span>
-                  MS Store 下載 (30天免費試玩)
+                  {t.btnMsStoreTrial}
                   <ExternalLink size={11} className="opacity-60" />
                 </a>
                 <a
@@ -392,7 +450,7 @@ export default function App() {
                   className="flex items-center justify-center gap-2 px-6 py-3.5 bg-slate-900/60 hover:bg-slate-800 text-slate-200 hover:text-white rounded-xl text-xs font-semibold border border-slate-800 hover:border-slate-700 transition"
                 >
                   <Github size={14} />
-                  造訪 GitHub 專案
+                  {t.btnVisitGithub}
                   <ExternalLink size={12} className="opacity-60" />
                 </a>
               </div>
@@ -402,7 +460,7 @@ export default function App() {
             <div className="lg:col-span-5 bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/80 border border-slate-800 rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between shadow-2xl min-h-[420px] lg:min-h-full">
               <div className="absolute top-4 left-6 flex items-center gap-2 z-30">
                 <span className="w-2 h-2 bg-rose-500 rounded-full animate-pulse"></span>
-                <span className="text-xs font-medium text-slate-300">流暢即時對戰體驗</span>
+                <span className="text-xs font-medium text-slate-300">{lang === 'zh' ? '流暢即時對戰體驗' : 'Highly Responsive Live Play'}</span>
               </div>
 
               {/* Card spread visualization integrated directly in Bento Box! */}
@@ -468,8 +526,8 @@ export default function App() {
               </div>
 
               <div className="mt-4 z-20">
-                <h3 className="text-lg font-bold text-white mb-1">極致流暢 AI 算力</h3>
-                <p className="text-xs text-slate-400 max-w-xs">深度學習驅動的台灣味對手，隨時隨地，3秒開桌，告別等待。</p>
+                <h3 className="text-lg font-bold text-white mb-1">{t.visualTitle}</h3>
+                <p className="text-xs text-slate-400 max-w-xs">{t.visualDesc}</p>
               </div>
             </div>
 
@@ -478,14 +536,14 @@ export default function App() {
       </section>
 
       {/* Feature Highlights Section */}
-      <section id="features" className="py-16 bg-slate-900/20 border-b border-slate-900">
+      <section id="features" className="py-16 bg-slate-900/20 border-b border-slate-900 scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-12">
             <h2 className="text-3xl font-display font-extrabold text-white sm:text-4xl mb-3">
-              三大研發核心特色
+              {t.featuresTitle}
             </h2>
             <p className="text-slate-400 text-xs">
-              基於大語言模型（LLM）與 `mesmerli/taiwan-big-two-ai` 嚴謹決策架構，重塑傳統撲克智慧。
+              {t.featuresSub}
             </p>
           </div>
 
@@ -496,9 +554,9 @@ export default function App() {
               <div className="p-3 bg-amber-500/10 rounded-xl text-amber-500 w-fit mb-4 group-hover:scale-110 transition duration-300">
                 <Users size={22} />
               </div>
-              <h3 className="text-lg font-bold text-white mb-2">多元人格研究架構</h3>
+              <h3 className="text-lg font-bold text-white mb-2">{t.feat1Title}</h3>
               <p className="text-slate-400 text-xs leading-relaxed">
-                模擬人類的心理思維！核心內建多元人格 (Multi-Persona Architecture)，包含保守、激進、靈活與自適應等多種不同牌風與風險偏好的人工智慧對手，拒絕機械式出牌，博弈感十足。
+                {t.feat1Desc}
               </p>
             </div>
 
@@ -507,9 +565,9 @@ export default function App() {
               <div className="p-3 bg-amber-500/10 rounded-xl text-amber-500 w-fit mb-4 group-hover:scale-110 transition duration-300">
                 <Sparkles size={22} className="text-amber-400" />
               </div>
-              <h3 className="text-lg font-bold text-white mb-2">賽後 AI 點評與策略問答</h3>
+              <h3 className="text-lg font-bold text-white mb-2">{t.feat2Title}</h3>
               <p className="text-slate-400 text-xs leading-relaxed">
-                對局結束後，由大語言模型（LLM）擔任專家裁判，對整場牌局的出牌時機、剩餘手牌與關鍵勝負決策進行深度復盤，並以對話問答方式一對一交流，幫您看清對手套路、快速精進牌技。
+                {t.feat2Desc}
               </p>
             </div>
 
@@ -518,9 +576,9 @@ export default function App() {
               <div className="p-3 bg-amber-500/10 rounded-xl text-amber-500 w-fit mb-4 group-hover:scale-110 transition duration-300">
                 <Layers size={22} />
               </div>
-              <h3 className="text-lg font-bold text-white mb-2">嚴謹正宗台灣大老二規則</h3>
+              <h3 className="text-lg font-bold text-white mb-2">{t.feat3Title}</h3>
               <p className="text-slate-400 text-xs leading-relaxed">
-                完美承襲「梅花 3 必須先行出牌」、「黑桃 2 最大」等台式傳統。支持單張、對子、以及順子、同花、葫蘆、四條（鐵支）、同花順等五張牌型組合，具備縝密的牌型檢驗與大小比對邏輯。
+                {t.feat3Desc}
               </p>
             </div>
 
@@ -529,7 +587,7 @@ export default function App() {
       </section>
 
       {/* Microsoft Store Download Banner Section */}
-      <section id="download" className="py-16 bg-gradient-to-br from-[#0c1322] to-[#0a0f1d] border-b border-slate-900 overflow-hidden relative">
+      <section id="download" className="py-16 bg-gradient-to-br from-[#0c1322] to-[#0a0f1d] border-b border-slate-900 overflow-hidden relative scroll-mt-24">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[350px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="bg-slate-900/40 border border-slate-800/80 rounded-3xl p-8 md:p-10 flex flex-col lg:flex-row items-center justify-between gap-10 backdrop-blur-md">
@@ -543,34 +601,33 @@ export default function App() {
                   <span className="bg-[#00a4ef] rounded-[1px]" />
                   <span className="bg-[#ffb900] rounded-[1px]" />
                 </span>
-                <span className="text-xs font-semibold text-blue-300 font-display">Microsoft Store 官方認證</span>
+                <span className="text-xs font-semibold text-blue-300 font-display">{t.msStoreBannerTag}</span>
               </div>
               
               <h2 className="text-2xl sm:text-3xl font-display font-extrabold text-white mb-4">
-                取得 Windows 原生桌面版
+                {t.msStoreBannerTitle}
               </h2>
               
               <p className="text-slate-300 text-xs sm:text-sm leading-relaxed mb-6">
-                除了網頁免安裝直接遊玩，您現在也可以至微軟商店取得 <strong className="text-amber-400">Windows 專屬客戶端</strong>！
-                商店定價為美金 <strong className="text-amber-400">$9.99 Base Price</strong>，但提供完整的 <strong className="text-emerald-400">30 天免費流暢試玩體驗</strong>。享受流暢不受限的 <strong className="text-sky-400">120 FPS 幀率技術演繹</strong>、極致省電能耗、離線無王牌單機熱身模式，邀您即刻免費下載體驗！
+                {t.msStoreBannerDesc}
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-400">
                 <div className="flex items-center gap-2.5">
                   <CheckCircle size={14} className="text-emerald-400 flex-shrink-0" />
-                  <span>支援離線對決、單機練習</span>
+                  <span>{t.msStoreBannerBullet1}</span>
                 </div>
                 <div className="flex items-center gap-2.5">
                   <CheckCircle size={14} className="text-emerald-400 flex-shrink-0" />
-                  <span>30天完整免費試玩體驗</span>
+                  <span>{t.msStoreBannerBullet2}</span>
                 </div>
                 <div className="flex items-center gap-2.5">
                   <CheckCircle size={14} className="text-emerald-400 flex-shrink-0" />
-                  <span>一鍵安裝，後台極速啟動</span>
+                  <span>{t.msStoreBannerBullet3}</span>
                 </div>
                 <div className="flex items-center gap-2.5">
                   <CheckCircle size={14} className="text-emerald-400 flex-shrink-0" />
-                  <span>完美配適鍵盤與高保真畫面</span>
+                  <span>{t.msStoreBannerBullet4}</span>
                 </div>
               </div>
             </div>
@@ -589,9 +646,9 @@ export default function App() {
                 </span>
               </div>
               
-              <h3 className="font-bold text-white text-sm mb-1">台灣大老二 AI</h3>
+              <h3 className="font-bold text-white text-sm mb-1">{t.brandName}</h3>
               <p className="text-[10px] text-slate-400 mb-5 leading-tight">
-                定價 $9.99 美金 <span className="text-slate-500">|</span> <span className="text-emerald-400 font-semibold">首月 30 天免費試玩</span>
+                {t.msStoreTrialText}
               </p>
               
               {/* Styled Download Action */}
@@ -602,11 +659,11 @@ export default function App() {
                 className="w-full flex items-center justify-center gap-2.5 py-3 bg-[#0078d4] hover:bg-[#106ebe] text-white font-bold rounded-xl text-xs transition duration-200 shadow-md shadow-blue-500/10 cursor-pointer"
               >
                 <Download size={13} />
-                <span>免費下載試玩 (30天)</span>
+                <span>{t.btnMsStoreTrialBanner}</span>
               </a>
               
               <span className="text-[9px] text-slate-500 mt-3 font-mono">
-                適用於 Windows 10/11 平台
+                {t.msStoreFooterText}
               </span>
             </div>
 
@@ -615,26 +672,31 @@ export default function App() {
       </section>
 
       {/* Daily Challenge Selector Grid Segment */}
-      <section id="challenges" className="py-16 bg-slate-950/40 border-b border-slate-900">
+      <section id="challenges" className="py-16 bg-slate-950/40 border-b border-slate-900 scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
             <div>
               <h2 className="text-2xl sm:text-3xl font-display font-extrabold text-white flex items-center gap-2">
-                🎯 每日挑戰：台灣大老二殘局特訓
+                {t.challengesTitle}
               </h2>
               <p className="text-slate-400 text-xs mt-1.5 leading-relaxed max-w-xl">
-                今日已有上千位牌客嘗試挑戰。選定以下殘局，點擊「挑戰」即可一鍵部署戰局桌椅，成功破解即可斬獲頭銜與排行榜分數加成！
+                {t.challengesDesc}
               </p>
             </div>
             
             <div className="flex items-center gap-2 text-xs text-rose-400 font-mono bg-rose-500/5 px-3 py-1.5 rounded-lg border border-rose-500/15">
-              <span>⏰ 每日 00:00AM 全自動刷新</span>
+              <span>{t.challengesAutoRefresh}</span>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {challenges.map((ch) => {
+              // Difficulty values can be translated based on difficulty dict mapping or direct static
+              const difficultyText = lang === 'en' 
+                ? (ch.difficulty === '簡單' ? 'Easy' : ch.difficulty === '中等' ? 'Medium' : 'Hard')
+                : ch.difficulty;
+
               let difficultyClass = '';
               if (ch.difficulty === '簡單') difficultyClass = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
               if (ch.difficulty === '中等') difficultyClass = 'bg-amber-500/10 text-amber-400 border-amber-500/20';
@@ -654,32 +716,32 @@ export default function App() {
                   <div>
                     <div className="flex justify-between items-center mb-3">
                       <span className={`text-[10px] px-2 py-0.5 rounded font-bold border ${difficultyClass}`}>
-                        {ch.difficulty}
+                        {difficultyText}
                       </span>
                       {ch.isCompleted ? (
                         <span className="text-[10px] text-emerald-400 flex items-center gap-1 font-semibold">
                           <CheckCircle size={10} />
-                          已破局
+                          {t.challengesStatusCompleted}
                         </span>
                       ) : (
                         <span className="text-[10px] text-slate-500">
-                          未破局
+                          {t.challengesStatusPending}
                         </span>
                       )}
                     </div>
 
                     <h3 className="font-bold text-base text-white font-sans mb-2">
-                      {ch.title}
+                      {lang === 'en' ? TRANSLATIONS.en.challengesData[ch.id as keyof typeof TRANSLATIONS.en.challengesData]?.title || ch.title : ch.title}
                     </h3>
 
                     <p className="text-slate-400 text-xs leading-relaxed mb-4 min-h-[64px]">
-                      {ch.description}
+                      {lang === 'en' ? TRANSLATIONS.en.challengesData[ch.id as keyof typeof TRANSLATIONS.en.challengesData]?.description || ch.description : ch.description}
                     </p>
                   </div>
 
                   <div className="border-t border-slate-800/80 pt-4 mt-2 flex items-center justify-between">
                     <span className="text-[10px] text-amber-500 font-mono font-semibold">
-                      🌟 積分 +150
+                      {t.challengesScore} +150
                     </span>
 
                     <button
@@ -693,7 +755,7 @@ export default function App() {
                           : 'bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white'
                       }`}
                     >
-                      {isActive ? '正在熱戰中' : '破解殘局 →'}
+                      {isActive ? t.challengesActionActive : t.challengesActionStart}
                     </button>
                   </div>
                 </div>
@@ -705,20 +767,20 @@ export default function App() {
       </section>
 
       {/* Playable Game Area with custom layout anchor */}
-      <section id="demo" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+      <section id="demo" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative scroll-mt-24">
         <div id="demo-table" className="absolute -top-20" />
         
         <div className="text-center max-w-2xl mx-auto mb-6">
           <h2 className="text-3xl font-display font-extrabold text-white flex items-center justify-center gap-2">
-            🎴 立刻線上切磋：智慧對決桌面
+            {t.demoTitle}
           </h2>
           <p className="text-xs text-slate-400 mt-2">
-            您可以切換遊玩「官網線上正式版」或體驗具備「每日殘局挑戰」的本地自研模擬桌！
+            {t.demoSubtitle}
           </p>
           
           {activeChallengeId && (
             <div className="inline-flex items-center gap-3.5 px-4 py-1.5 bg-amber-500/10 border border-amber-500/20 text-amber-300 rounded-full text-xs font-medium mt-4 font-sans">
-              <span>⚡ 現正處於【{currentActiveChallengeObj?.title}】殘局特訓模式</span>
+              <span>{t.demoActiveChallengePrefix}{lang === 'en' ? TRANSLATIONS.en.challengesData[activeChallengeId as keyof typeof TRANSLATIONS.en.challengesData]?.title || currentActiveChallengeObj?.title : currentActiveChallengeObj?.title}{t.demoActiveChallengeSuffix}</span>
               <button
                 onClick={() => {
                   setActiveChallengeId(null);
@@ -726,7 +788,7 @@ export default function App() {
                 }}
                 className="underline hover:text-white cursor-pointer ml-1 font-bold text-[11px]"
               >
-                切換回普通 AI 13張對戰
+                {t.demoSwitchNormalPlay}
               </button>
             </div>
           )}
@@ -743,7 +805,7 @@ export default function App() {
                   : 'text-slate-400 hover:text-white'
               }`}
             >
-              <span>🌐 官網線上正式版 IP 戰局</span>
+              <span>{t.demoModeOfficial}</span>
               {playMode === 'official' && (
                 <span className="px-1.5 py-0.5 rounded bg-slate-950 text-[10px] text-amber-400 font-bold font-mono">
                   PRO
@@ -758,7 +820,7 @@ export default function App() {
                   : 'text-slate-400 hover:text-white'
               }`}
             >
-              <span>🎯 網頁試玩 & 每日殘局</span>
+              <span>{t.demoModeLocal}</span>
               {activeChallengeId && (
                 <span className="w-2 h-2 bg-red-500 rounded-full animate-ping" />
               )}
@@ -771,7 +833,7 @@ export default function App() {
           <div className="absolute top-3 left-6 flex items-center gap-2 z-20 bg-slate-900/90 px-2.5 py-1 rounded-full border border-slate-850">
             <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
             <span className="text-[10px] text-slate-300 font-mono tracking-wider">
-              {playMode === 'official' ? '遠端官方獨立主機：連線運作中' : '台北大同戰局區 (自研模擬引擎版)'}
+              {playMode === 'official' ? t.demoStatusOfficial : t.demoStatusLocal}
             </span>
           </div>
 
@@ -797,7 +859,7 @@ export default function App() {
                   <div className="mt-3.5 px-4 py-2.5 bg-slate-950/85 border border-slate-800/80 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-slate-400">
                     <span className="flex items-center gap-2">
                       <Zap size={14} className="text-amber-400 flex-shrink-0 animate-pulse" />
-                      <span>目前已完美為您在主流沙盒框架中安全嵌入台灣大老二開源項目官網！</span>
+                      <span>{t.iframeSandboxNotice}</span>
                     </span>
                     <a
                       href="https://mesmerli.github.io/taiwan-big-two-ai/"
@@ -805,7 +867,7 @@ export default function App() {
                       rel="noopener noreferrer"
                       className="text-amber-450 hover:text-amber-400 font-bold transition hover:underline flex items-center gap-1 whitespace-nowrap"
                     >
-                      不限制直接開新分頁全螢幕遊玩 <ExternalLink size={12} />
+                      {t.iframeFullWidthBtn} <ExternalLink size={12} />
                     </a>
                   </div>
                 </div>
@@ -826,6 +888,7 @@ export default function App() {
                   onGameWin={handleGameWin}
                   dailyChallengeActiveId={activeChallengeId}
                   onChallengeComplete={handleChallengeComplete}
+                  currentLanguage={lang}
                 />
               </motion.div>
             )}
@@ -835,7 +898,7 @@ export default function App() {
       </section>
 
       {/* Leaderboard & Player setup configuration (Satisfies interconnected requirements) */}
-      <section id="leaderboard" className="py-16 bg-slate-950/60 border-t border-slate-900">
+      <section id="leaderboard" className="py-16 bg-slate-950/60 border-t border-slate-900 scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
@@ -845,48 +908,57 @@ export default function App() {
               <div>
                 <div className="flex items-center gap-2 pb-3 mb-4 border-b border-slate-800/80">
                   <Smartphone className="text-amber-500" size={18} />
-                  <h3 className="font-bold text-base text-white">自訂你的神級牌客屬性</h3>
+                  <h3 className="font-bold text-base text-white">{t.custTitle}</h3>
                 </div>
 
                 <form onSubmit={handleUpdateIdentity} className="space-y-4">
                   <div>
-                    <label className="block text-xs text-slate-400 font-medium mb-1.5">對決暱稱</label>
+                    <label className="block text-xs text-slate-400 font-medium mb-1.5">{t.custLabelNickname}</label>
                     <input
                       type="text"
                       value={tempName}
                       onChange={(e) => setTempName(e.target.value)}
                       maxLength={10}
-                      placeholder="例如: 三重福龍"
+                      placeholder={t.custPlaceholder}
                       className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500 text-left"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs text-slate-400 font-medium mb-1.5">大專專屬牌客稱號</label>
+                    <label className="block text-xs text-slate-400 font-medium mb-1.5">{t.custLabelTitle}</label>
                     <select
                       value={selectedLocalTitle}
                       onChange={(e) => setSelectedLocalTitle(e.target.value)}
                       className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500 text-left"
                     >
-                      {LOCAL_TITLES.map((t, idx) => (
-                        <option key={idx} value={t}>
-                          {t}
-                        </option>
-                      ))}
+                      {LOCAL_TITLES.map((tVal, idx) => {
+                        const tTranslated = lang === 'en'
+                          ? (tVal === '萬華牌局一陣風' ? 'Wanhua Wind Rider'
+                             : tVal === '大安炒牌大宗師' ? 'Daan Shuffler Grandmaster'
+                             : tVal === '板橋鐵支狂熱者' ? 'Banqiao Quad Lover'
+                             : tVal === '信義梭哈黃金右手' ? 'Xinyi Golden Hand'
+                             : tVal)
+                          : tVal;
+                        return (
+                          <option key={idx} value={tVal}>
+                            {tTranslated}
+                          </option>
+                        );
+                      })}
                     </select>
                   </div>
 
                   <div className="bg-amber-500/5 p-3.5 rounded-xl border border-amber-500/10 text-[11px] text-slate-300 leading-relaxed font-sans">
-                    🏆 <span className="font-bold text-amber-400">當前積分：{userScore}分</span>
+                    🏆 <span className="font-bold text-amber-400">{t.custScoreText}：{userScore}</span>
                     <br />
-                    此積分將實時刷新你在全網玩家排行榜的位置，快試試更改名字吧！
+                    {t.custDescText}
                   </div>
 
                   <button
                     type="submit"
                     className="w-full py-2.5 bg-amber-500 text-slate-950 text-xs font-bold rounded-full cursor-pointer hover:bg-amber-400 transition-all font-sans active:scale-95 shadow-md shadow-amber-500/10"
                   >
-                    確認修改、加入江湖！
+                    {t.custConfirmBtn}
                   </button>
                 </form>
               </div>
@@ -897,15 +969,15 @@ export default function App() {
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-800/80 pb-4 mb-4 gap-2">
                 <div>
                   <h3 className="font-bold text-lg text-white font-display flex items-center gap-1.5 whitespace-nowrap overflow-hidden text-ellipsis">
-                    🏆 台灣大老二・實時神級王牌排行榜
+                    {t.leaderboardTitle}
                   </h3>
                   <p className="text-slate-400 text-xs mt-0.5">
-                    由全台真實玩家對抗記錄演算出。贏得更多殘局或戰局，即可提升排名！
+                    {t.leaderboardDesc}
                   </p>
                 </div>
                 
                 <div className="text-[10px] text-amber-400 font-mono bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20 whitespace-nowrap">
-                  實時連接中
+                  {t.leaderboardStatus}
                 </div>
               </div>
 
@@ -914,21 +986,66 @@ export default function App() {
                 <table className="w-full text-left text-xs text-slate-300">
                   <thead>
                     <tr className="border-b border-slate-800 text-slate-400 uppercase tracking-wider text-[10px] font-mono">
-                      <th className="py-2.5 px-2">排名</th>
-                      <th className="py-2.5 px-3">大老二名號</th>
-                      <th className="py-2.5 px-3">江湖稱號</th>
-                      <th className="py-2.5 px-3 text-right">戰績</th>
-                      <th className="py-2.5 px-3 text-right">排位精準積分</th>
-                      <th className="py-2.5 px-3 min-w-[120px]">近期榮譽勳章</th>
+                      <th className="py-2.5 px-2">{t.leaderboardThRank}</th>
+                      <th className="py-2.5 px-3">{t.leaderboardThName}</th>
+                      <th className="py-2.5 px-3">{t.leaderboardThTitle}</th>
+                      <th className="py-2.5 px-3 text-right">{t.leaderboardThRecord}</th>
+                      <th className="py-2.5 px-3 text-right">{t.leaderboardThScore}</th>
+                      <th className="py-2.5 px-3 min-w-[120px]">{t.leaderboardThMedals}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {leaderboard.map((player) => {
-                      const isMe = player.name.includes('(你)');
+                      const isMe = player.name.includes('(你)') || player.name.includes('(You)');
                       let rankBg = 'text-slate-400';
                       if (player.rank === 1) rankBg = 'text-amber-400 font-bold';
                       if (player.rank === 2) rankBg = 'text-slate-300 font-bold';
                       if (player.rank === 3) rankBg = 'text-amber-600 font-bold';
+
+                      // Translate name (You)
+                      let playerName = player.name;
+                      if (isMe) {
+                        playerName = lang === 'en' ? `${userDisplayName} (You)` : `${userDisplayName} (你)`;
+                      } else {
+                        // Translate player names / titles in English leaderboard beautifully
+                        if (lang === 'en') {
+                          playerName = playerName
+                            .replace('三重福龍', 'Sanchong Fortune Dragon')
+                            .replace('基隆王爺牌客', 'Keelung Royal Cardmaster')
+                            .replace('北投順子狂人', 'Beitou Straight Fanatic')
+                            .replace('台中鐵八牌神', 'Taichung Quad God')
+                            .replace('台南連環神算', 'Tainan Combo Calculator')
+                            .replace('高雄絕情老二', 'Kaohsiung Ace Ruler');
+                        }
+                      }
+
+                      // Translate static titles
+                      let playerTitle = player.title;
+                      if (lang === 'en') {
+                        playerTitle = playerTitle
+                          .replace('東區大老二至尊', 'Eastern Sovereign')
+                          .replace('蘆洲葫蘆至尊', 'Luzhou FullHouse Lord')
+                          .replace('九份鐵支神捕', 'Jiufen Quad Hunter')
+                          .replace('士林順子狂殺手', 'Shilin Straight Slasher')
+                          .replace('萬華牌局一陣風', 'Wanhua Wind Rider')
+                          .replace('大安炒牌大宗師', 'Daan Shuffler Grandmaster')
+                          .replace('板橋鐵支狂熱者', 'Banqiao Quad Lover')
+                          .replace('信義梭哈黃金右手', 'Xinyi Golden Hand');
+                      }
+
+                      // Translate medals
+                      const translatedMedals = player.recentMedals.map(m => {
+                        if (lang === 'en') {
+                          return m
+                            .replace('🔥 當日挑戰獲勝者', '🔥 Daily Champ')
+                            .replace('🍀 運氣爆棚', '🍀 Blessed Luck')
+                            .replace('🧠 完美心流推理', '🧠 Perfect Focus')
+                            .replace('⚡ 高速破局先鋒', '⚡ Blitz Solver')
+                            .replace('💎 絕地葫蘆大逆轉', '💎 FullHouse Reversal')
+                            .replace('🛡️ 防撞大師十連勝', '🛡️ Defend Grandmaster');
+                        }
+                        return m;
+                      });
 
                       return (
                         <tr
@@ -944,21 +1061,21 @@ export default function App() {
                           </td>
                           <td className="py-3 px-3 font-medium flex items-center gap-1">
                             {isMe ? '👤 ' : ''}
-                            {player.name}
+                            {playerName}
                           </td>
-                          <td className="py-3 px-3 text-slate-400 text-[11px]">{player.title}</td>
+                          <td className="py-3 px-3 text-slate-400 text-[11px]">{playerTitle}</td>
                           <td className="py-3 px-3 text-right text-slate-400">
-                            {player.winCount} 勝 / {player.playCount} 局
+                            {player.winCount} {lang === 'en' ? 'W' : '勝'} / {player.playCount} {lang === 'en' ? 'G' : '局'}
                           </td>
                           <td className="py-3 px-3 text-right font-mono font-bold text-amber-400">
                             {player.score.toLocaleString()}
                           </td>
                           <td className="py-3 px-3 text-slate-400 text-[10px]">
                             <div className="flex flex-wrap gap-1">
-                              {player.recentMedals.length === 0 ? (
+                              {translatedMedals.length === 0 ? (
                                 <span className="text-slate-600">-</span>
                               ) : (
-                                player.recentMedals.map((medal, idx) => (
+                                translatedMedals.map((medal, idx) => (
                                   <span key={idx} className="bg-slate-950 px-1.5 py-0.5 rounded text-[10px] whitespace-nowrap">
                                     {medal}
                                   </span>
@@ -981,35 +1098,40 @@ export default function App() {
       </section>
 
       {/* GitHub Algorithm Deep-Dive Guidance Section */}
-      <section id="tech" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-900">
+      <section id="tech" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-900 scroll-mt-24">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch">
           
           <div className="lg:col-span-5 text-left flex flex-col justify-center">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full mb-5 w-fit">
               <Layers size={14} className="text-amber-400" />
-              <span className="text-xs font-semibold text-amber-300 font-display">核心開源技術：大老二決策智慧</span>
+              <span className="text-xs font-semibold text-amber-300 font-display">{t.techBadge}</span>
             </div>
 
             <h3 className="text-2xl sm:text-3xl font-display font-extrabold text-white mb-4">
-              基於 `taiwan-big-two-ai` 演算法架構
+              {t.techTitle}
             </h3>
 
             <p className="text-slate-300 text-xs leading-relaxed mb-6">
-              本落地頁的 AI 出牌選擇演算法直接繼承了來自 <a href="https://github.com/mesmerli/taiwan-big-two-ai" target="_blank" rel="noreferrer" className="text-amber-400 underline hover:text-amber-300 font-semibold inline-flex items-center gap-1"><Github size={12} className="shrink-0 text-amber-400" />mesmerli/taiwan-big-two-ai <ExternalLink size={10} /></a> 的開源精神。針對台灣大老二多牌型組合的極限搜尋，實現了高精度推理。
+              {t.techDesc}{' '}
+              <a href="https://github.com/mesmerli/taiwan-big-two-ai" target="_blank" rel="noreferrer" className="text-amber-400 underline hover:text-amber-300 font-semibold inline-flex items-center gap-1">
+                <Github size={12} className="shrink-0 text-amber-400" />
+                mesmerli/taiwan-big-two-ai <ExternalLink size={10} />
+              </a>
+              {lang === 'en' ? ' open-source spirit. Extremely high-precision heuristics for Taiwanese-specific card weights.' : ' 的開源精神。針對台灣大老二多牌型組合的極限搜尋，實現了高精度推理。'}
             </p>
 
             <ul className="space-y-3 text-xs text-slate-400">
               <li className="flex items-start gap-2.5">
                 <Check className="text-amber-400 flex-shrink-0 mt-0.5" size={14} />
-                <span><strong>五張牌組合精準剪枝：</strong>自動優化順子、同花、葫蘆、鐵支的排序層級，確保五張能精準壓制。</span>
+                <span>{t.techLi1}</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <Check className="text-amber-400 flex-shrink-0 mt-0.5" size={14} />
-                <span><strong>梅花 3 特殊開局保護：</strong>嚴格覆蓋台灣在地開局傳統（持有梅花三者必須將其包含在首波手牌中）。</span>
+                <span>{t.techLi2}</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <Check className="text-amber-400 flex-shrink-0 mt-0.5" size={14} />
-                <span><strong>鐵支與同花順規則特判：</strong>覆蓋各類戰略情況下的主動權變動，AI 能判斷何時用鐵支一槌定局。</span>
+                <span>{t.techLi3}</span>
               </li>
             </ul>
           </div>
@@ -1022,7 +1144,7 @@ export default function App() {
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-400/40" />
             </div>
 
-            <div className="text-slate-500 mb-2 border-b border-slate-900 pb-2">📂 @utils/bigTwoRules.ts - 核心決策精簡邏輯</div>
+            <div className="text-slate-500 mb-2 border-b border-slate-900 pb-2">📂 @utils/bigTwoRules.ts - {lang === 'en' ? 'Core Rule Evaluation logic' : '核心決策精簡邏輯'}</div>
             
             <span className="text-indigo-400">export function</span> <span className="text-teal-400">evaluateHand</span>(cards: Card[]): PlayHand &#123;
             <br />
@@ -1053,7 +1175,7 @@ export default function App() {
             &#125;
             
             <div className="mt-4 text-amber-500 text-[10px] border-t border-slate-900 pt-3 font-semibold">
-              🎉 欲獲取包含搜索樹、卷積神經網路預估牌勝率的完整代碼，請參照 GitHub 下載。
+              {t.techFooterNotice}
             </div>
           </div>
 
@@ -1067,17 +1189,17 @@ export default function App() {
             <div className="text-slate-200 font-display font-bold text-sm flex items-center gap-1.5">
               <img 
                 src="https://raw.githubusercontent.com/mesmerli/taiwan-big-two-ai/main/src/assets/logo.png" 
-                alt="台灣大老二 AI" 
+                alt={t.brandName} 
                 className="w-6 h-6 object-contain rounded"
                 referrerPolicy="no-referrer"
               />
-              <span>台灣大老二 AI 連線社群</span>
+              <span>{t.footerTitle}</span>
             </div>
             <p className="max-w-md leading-relaxed text-[11px] text-slate-500">
-              本專案由開源愛好者與大老二迷合力打造，致敬台灣道地傳統棋牌。
+              {t.footerDesc}
             </p>
             <p className="leading-relaxed text-[11px] text-slate-400 flex items-center gap-1">
-              <span>聯絡信箱：</span>
+              <span>{t.footerContact}</span>
               <a href="mailto:mesmerli@hotmail.com" className="text-amber-500/90 hover:text-amber-400 transition hover:underline font-mono">
                 mesmerli@hotmail.com
               </a>
@@ -1086,7 +1208,7 @@ export default function App() {
 
           <div className="flex flex-col sm:items-end gap-2 text-xs text-slate-400">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 sm:justify-end">
-              <span className="text-slate-500">下載 Windows 客戶端：</span>
+              <span className="text-slate-500">{t.footerDownloadText}</span>
               <a
                 href="https://apps.microsoft.com/detail/9PM1S8GKBLK9?hl=zh-tw&gl=TW&ocid=pdpshare"
                 target="_blank"
@@ -1099,18 +1221,18 @@ export default function App() {
                   <span className="bg-[#00a4ef] rounded-[0.5px]" />
                   <span className="bg-[#ffb900] rounded-[0.5px]" />
                 </span>
-                Microsoft Store 官方下載 (30天免費試用)
+                {t.footerPlatformText}
               </a>
             </div>
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 sm:justify-end">
-              <span className="text-slate-500">技術核心專案：</span>
+              <span className="text-slate-500">{t.footerRepoText}</span>
               <a href="https://github.com/mesmerli/taiwan-big-two-ai" target="_blank" rel="noreferrer" className="text-amber-400 font-semibold transition hover:underline flex items-center gap-1">
                 <Github size={13} className="shrink-0 text-amber-400" />
                 mesmerli/taiwan-big-two-ai <ExternalLink size={11} />
               </a>
             </div>
             <span className="text-[10px] text-slate-600 mt-2">
-              © {new Date().getFullYear()} 台灣大老二 AI. All rights reserved.
+              © {new Date().getFullYear()} {t.brandName}. All rights reserved.
             </span>
           </div>
         </div>
@@ -1127,7 +1249,7 @@ export default function App() {
             className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-2 px-5 py-3 rounded-full bg-slate-900/95 border border-amber-500/40 text-amber-400 font-medium text-xs shadow-[0_8px_30px_rgb(0,0,0,0.5)] backdrop-blur-md whitespace-nowrap"
           >
             <CheckCircle size={15} className="text-amber-500 shrink-0" />
-            <span>已複製分享連結！快傳給好友挑戰吧 🃏 (https://mesmerli.github.io/twbig2/)</span>
+            <span>{t.shareToastText} (https://mesmerli.github.io/twbig2/)</span>
           </motion.div>
         )}
       </AnimatePresence>
