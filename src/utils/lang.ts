@@ -300,7 +300,7 @@ export const TRANSLATIONS = {
     statBadge3Unit: '',
     statBadge3Lbl: 'Post-Game AI Reviews & Q&A',
     btnStartWebPlay: 'Start Web Play',
-    btnMsStoreTrial: 'MS Store Download (30-day Free Trial)',
+    btnMsStoreTrial: 'MS Store Download',
     btnVisitGithub: 'Visit GitHub Repo',
     visualTitle: 'Extreme AI Power',
     visualDesc: 'Deep-learning driven Taiwanese opponents. Instantly start a table in 3 seconds anywhere, anytime.',
