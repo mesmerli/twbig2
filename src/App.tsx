@@ -443,16 +443,6 @@ export default function App() {
                   {t.btnMsStoreTrial}
                   <ExternalLink size={11} className="opacity-60" />
                 </a>
-                <a
-                  href="https://github.com/mesmerli/taiwan-big-two-ai"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center justify-center gap-2 px-6 py-3.5 bg-slate-900/60 hover:bg-slate-800 text-slate-200 hover:text-white rounded-xl text-xs font-semibold border border-slate-800 hover:border-slate-700 transition"
-                >
-                  <Github size={14} />
-                  {t.btnVisitGithub}
-                  <ExternalLink size={12} className="opacity-60" />
-                </a>
               </div>
             </div>
 
