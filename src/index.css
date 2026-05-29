@@ -10,18 +10,27 @@
 }
 
 /* Custom card fan styles and smooth scrollbars */
+/* Firefox Scrollbar Support */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(245, 158, 11, 0.4) #070a13;
+}
+
+/* Chrome, Edge, Safari (Webkit) Scrollbar Support */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 10px;
+  height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.4);
+  background: #070a13; /* Darker than body background for subtle depth representation */
+  border-left: 1px solid rgba(255, 255, 255, 0.05);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(16, 185, 129, 0.3);
+  background: rgba(245, 158, 11, 0.35); /* Elegant translucent Amber matching the page branding */
+  border: 2px solid #070a13; /* Creates a clean, bordered floating pill effect */
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(16, 185, 129, 0.5);
+  background: rgba(245, 158, 11, 0.75); /* High-contrast vivid Amber on hover or drag */
 }
 
