@@ -947,7 +947,7 @@ export default function App() {
             </h3>
 
             <p className="text-slate-300 text-xs leading-relaxed mb-6">
-ext-amber-400 underline hover:text-amber-300 font-semibold inline-flex items-center gap-0.5">mesmerli/taiwan-big-two-ai <ExternalLink size={10} /></a> 的開源精神。針對台灣大老二多牌型組合的極限搜尋，實現了高精度推理。              本落地頁的 AI 出牌選擇演算法直接繼承了來自 <a href="https://github.com/mesmerli/taiwan-big-two-ai" target="_blank" rel="noreferrer" className="t
+              本落地頁的 AI 出牌選擇演算法直接繼承了來自 <a href="https://github.com/mesmerli/taiwan-big-two-ai" target="_blank" rel="noreferrer" className="text-amber-400 underline hover:text-amber-300 font-semibold inline-flex items-center gap-0.5">mesmerli/taiwan-big-two-ai <ExternalLink size={10} /></a> 的開源精神。針對台灣大老二多牌型組合的極限搜尋，實現了高精度推理。
             </p>
 
             <ul className="space-y-3 text-xs text-slate-400">
