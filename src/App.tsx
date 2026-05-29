@@ -19,6 +19,7 @@ import {
   User,
   Medal,
   Download,
+  Share2,
 } from 'lucide-react';
 
 import { Card, LeaderboardEntry, DailyChallenge } from './types';
@@ -42,6 +43,52 @@ export default function App() {
 
   // Custom live sorting leaderboard
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+
+  // Share website configuration
+  const [showShareToast, setShowShareToast] = useState(false);
+
+  const handleShare = async () => {
+    const shareUrl = 'https://mesmerli.github.io/twbig2/';
+    const shareData = {
+      title: '台灣大老二 AI - 全台最強對戰平台',
+      text: '快來挑戰全台最強的台灣大老二 AI 殘局與對戰 Demo！網頁版免下載，極限牌型搜尋高精度推理！',
+      url: shareUrl,
+    };
+
+    if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+      try {
+        await navigator.share(shareData);
+        setShowShareToast(true);
+        setTimeout(() => setShowShareToast(false), 3000);
+      } catch (err) {
+        copyToClipboard(shareUrl);
+      }
+    } else {
+      copyToClipboard(shareUrl);
+    }
+  };
+
+  const copyToClipboard = (url: string) => {
+    navigator.clipboard.writeText(url)
+      .then(() => {
+        setShowShareToast(true);
+        setTimeout(() => setShowShareToast(false), 3000);
+      })
+      .catch((err) => {
+        const tempInput = document.createElement('input');
+        tempInput.value = url;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        try {
+          document.execCommand('copy');
+          setShowShareToast(true);
+          setTimeout(() => setShowShareToast(false), 3000);
+        } catch (e) {
+          console.error(e);
+        }
+        document.body.removeChild(tempInput);
+      });
+  };
 
   // Mobile menu trigger
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -155,15 +202,14 @@ export default function App() {
               </span>
               微軟商店下載
             </a>
-            <a
-              href="https://github.com/mesmerli/taiwan-big-two-ai"
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 text-white border border-slate-700 transition"
+            <button
+              id="desktop-share-btn"
+              onClick={handleShare}
+              className="flex items-center justify-center p-2.5 rounded-full bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 hover:border-amber-500/50 transition cursor-pointer"
+              title="分享此網站給朋友"
             >
-              <Github size={14} />
-              GitHub
-            </a>
+              <Share2 size={14} />
+            </button>
             <button
               onClick={() => scrollToDemo('official')}
               className="bg-amber-500 hover:bg-amber-400 text-slate-950 px-6 py-2 rounded-full font-bold transition-all shadow-lg text-xs cursor-pointer"
@@ -245,15 +291,17 @@ export default function App() {
                 </span>
                 微軟商店官方下載
               </a>
-              <a
-                href="https://github.com/mesmerli/taiwan-big-two-ai"
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center justify-center gap-2 px-3 py-2 bg-slate-800 rounded-lg text-xs text-white"
+              <button
+                id="mobile-share-btn"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  handleShare();
+                }}
+                className="flex items-center justify-center gap-2 px-3 py-2 bg-amber-500/10 border border-amber-500/30 rounded-lg text-xs text-amber-400 font-semibold cursor-pointer"
               >
-                <Github size={14} />
-                GitHub 專案
-              </a>
+                <Share2 size={14} />
+                分享網站給朋友
+              </button>
               <button
                 onClick={() => {
                   setMobileMenuOpen(false);
@@ -947,7 +995,7 @@ export default function App() {
             </h3>
 
             <p className="text-slate-300 text-xs leading-relaxed mb-6">
-              本落地頁的 AI 出牌選擇演算法直接繼承了來自 <a href="https://github.com/mesmerli/taiwan-big-two-ai" target="_blank" rel="noreferrer" className="text-amber-400 underline hover:text-amber-300 font-semibold inline-flex items-center gap-0.5">mesmerli/taiwan-big-two-ai <ExternalLink size={10} /></a> 的開源精神。針對台灣大老二多牌型組合的極限搜尋，實現了高精度推理。
+              本落地頁的 AI 出牌選擇演算法直接繼承了來自 <a href="https://github.com/mesmerli/taiwan-big-two-ai" target="_blank" rel="noreferrer" className="text-amber-400 underline hover:text-amber-300 font-semibold inline-flex items-center gap-1"><Github size={12} className="shrink-0 text-amber-400" />mesmerli/taiwan-big-two-ai <ExternalLink size={10} /></a> 的開源精神。針對台灣大老二多牌型組合的極限搜尋，實現了高精度推理。
             </p>
 
             <ul className="space-y-3 text-xs text-slate-400">
@@ -1057,6 +1105,7 @@ export default function App() {
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 sm:justify-end">
               <span className="text-slate-500">技術核心專案：</span>
               <a href="https://github.com/mesmerli/taiwan-big-two-ai" target="_blank" rel="noreferrer" className="text-amber-400 font-semibold transition hover:underline flex items-center gap-1">
+                <Github size={13} className="shrink-0 text-amber-400" />
                 mesmerli/taiwan-big-two-ai <ExternalLink size={11} />
               </a>
             </div>
@@ -1066,6 +1115,22 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {/* Share Toast Notification Feedback */}
+      <AnimatePresence>
+        {showShareToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-2 px-5 py-3 rounded-full bg-slate-900/95 border border-amber-500/40 text-amber-400 font-medium text-xs shadow-[0_8px_30px_rgb(0,0,0,0.5)] backdrop-blur-md whitespace-nowrap"
+          >
+            <CheckCircle size={15} className="text-amber-500 shrink-0" />
+            <span>已複製分享連結！快傳給好友挑戰吧 🃏 (https://mesmerli.github.io/twbig2/)</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
