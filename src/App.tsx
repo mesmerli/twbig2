@@ -1172,6 +1172,177 @@ export default function App() {
         </div>
       </section>
 
+      {/* AI Opponent Characters Section (Traditional Heuristics & LLM Personas) */}
+      <section id="characters" className="py-12 bg-slate-900/30 border-t border-slate-900 scroll-mt-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <div className="text-center max-w-3xl mx-auto mb-8">
+            <h2 className="text-2xl sm:text-3xl font-display font-extrabold text-white flex items-center justify-center gap-2">
+              <span className="bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
+                {t.charSectionTitle}
+              </span>
+            </h2>
+            <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+              {t.charSectionSubtitle}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            {/* Alex Card */}
+            <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 hover:border-blue-500/40 transition-all hover:shadow-[0_0_15px_rgba(59,130,246,0.1)] relative flex flex-col justify-between group text-left">
+              <div>
+                <div className="flex items-center justify-between mb-3 border-b border-slate-800/50 pb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">🧑💼</span>
+                    <h3 className="font-bold text-sm text-white font-display">{t.charAlexTitle}</h3>
+                  </div>
+                  <span className="text-[10px] text-blue-400 font-mono font-semibold bg-blue-500/10 px-2 py-0.5 rounded-full border border-blue-500/20">
+                    Heuristic
+                  </span>
+                </div>
+                <p className="text-slate-400 text-xs leading-relaxed mb-4">
+                  {t.charAlexDesc}
+                </p>
+              </div>
+              <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800/40 text-[11px] text-slate-300 leading-normal">
+                <span className="font-semibold text-blue-300 block mb-0.5">{lang === 'zh' ? '🧠 出牌特徵' : '🧠 Play Behavior'}</span>
+                {t.charAlexLead}
+              </div>
+            </div>
+
+            {/* Bella Card */}
+            <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 hover:border-emerald-500/40 transition-all hover:shadow-[0_0_15px_rgba(16,185,129,0.1)] relative flex flex-col justify-between group text-left">
+              <div>
+                <div className="flex items-center justify-between mb-3 border-b border-slate-800/50 pb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">👩⚕️</span>
+                    <h3 className="font-bold text-sm text-white font-display">{t.charBellaTitle}</h3>
+                  </div>
+                  <span className="text-[10px] text-emerald-400 font-mono font-semibold bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                    Heuristic
+                  </span>
+                </div>
+                <p className="text-slate-400 text-xs leading-relaxed mb-4">
+                  {t.charBellaDesc}
+                </p>
+              </div>
+              <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800/40 text-[11px] text-slate-300 leading-normal">
+                <span className="font-semibold text-emerald-300 block mb-0.5">{lang === 'zh' ? '🧠 出牌特徵' : '🧠 Play Behavior'}</span>
+                {t.charBellaLead}
+              </div>
+            </div>
+
+            {/* Chris Card */}
+            <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 hover:border-rose-500/40 transition-all hover:shadow-[0_0_15px_rgba(244,63,94,0.1)] relative flex flex-col justify-between group text-left">
+              <div>
+                <div className="flex items-center justify-between mb-3 border-b border-slate-800/50 pb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">🧔</span>
+                    <h3 className="font-bold text-sm text-white font-display">{t.charChrisTitle}</h3>
+                  </div>
+                  <span className="text-[10px] text-rose-400 font-mono font-semibold bg-rose-500/10 px-2 py-0.5 rounded-full border border-rose-500/20">
+                    Heuristic
+                  </span>
+                </div>
+                <p className="text-slate-400 text-xs leading-relaxed mb-4">
+                  {t.charChrisDesc}
+                </p>
+              </div>
+              <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800/40 text-[11px] text-slate-300 leading-normal">
+                <span className="font-semibold text-rose-300 block mb-0.5">{lang === 'zh' ? '🧠 出牌特徵' : '🧠 Play Behavior'}</span>
+                {t.charChrisLead}
+              </div>
+            </div>
+
+            {/* Diana Card */}
+            <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 hover:border-purple-500/40 transition-all hover:shadow-[0_0_15px_rgba(168,85,247,0.1)] relative flex flex-col justify-between group text-left">
+              <div>
+                <div className="flex items-center justify-between mb-3 border-b border-slate-800/50 pb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">🔮</span>
+                    <h3 className="font-bold text-sm text-purple-300 font-display">{t.charDianaTitle}</h3>
+                  </div>
+                  <span className="text-[10px] text-purple-400 font-mono font-semibold bg-purple-500/10 px-2 py-0.5 rounded-full border border-purple-500/20 animate-pulse">
+                    LLM-Agent
+                  </span>
+                </div>
+                <p className="text-slate-400 text-xs leading-relaxed mb-4">
+                  {t.charDianaDesc}
+                </p>
+              </div>
+              <div className="bg-[#110e1b] p-3 rounded-xl border border-purple-900/30 text-[11px] text-slate-300 leading-normal">
+                <span className="font-semibold text-purple-300 block mb-0.5">{lang === 'zh' ? '🤖 推理戰術' : '🤖 LLM Tactics'}</span>
+                {t.charDianaTactics}
+              </div>
+            </div>
+
+            {/* Ares Card */}
+            <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 hover:border-orange-500/40 transition-all hover:shadow-[0_0_15px_rgba(249,115,22,0.1)] relative flex flex-col justify-between group text-left">
+              <div>
+                <div className="flex items-center justify-between mb-3 border-b border-slate-800/50 pb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">⚔️</span>
+                    <h3 className="font-bold text-sm text-orange-300 font-display">{t.charAresTitle}</h3>
+                  </div>
+                  <span className="text-[10px] text-orange-400 font-mono font-semibold bg-orange-500/10 px-2 py-0.5 rounded-full border border-orange-500/20 animate-pulse">
+                    LLM-Agent
+                  </span>
+                </div>
+                <p className="text-slate-400 text-xs leading-relaxed mb-4">
+                  {t.charAresDesc}
+                </p>
+              </div>
+              <div className="bg-[#1b0e07] p-3 rounded-xl border border-orange-900/30 text-[11px] text-slate-300 leading-normal">
+                <span className="font-semibold text-orange-300 block mb-0.5">{lang === 'zh' ? '🤖 推理戰術' : '🤖 LLM Tactics'}</span>
+                {t.charAresTactics}
+              </div>
+            </div>
+
+            {/* Dynamic Persona Card */}
+            <div className="bg-slate-900/40 border border-dashed border-slate-800 rounded-2xl p-5 relative flex flex-col justify-between lg:col-span-1 md:col-span-2 text-left">
+              <div>
+                <div className="flex items-center gap-2 mb-2 border-b border-slate-800/50 pb-2">
+                  <span className="text-xl">🔄</span>
+                  <h3 className="font-bold text-sm text-amber-400 font-display">{t.charEngineTitle}</h3>
+                </div>
+                <p className="text-slate-400 text-[11px] leading-relaxed mb-3">
+                  {t.charEngineDesc}
+                </p>
+                <ul className="space-y-1.5 text-[10.5px] text-slate-300">
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-[9px] mt-0.5 text-amber-400">🧱</span>
+                    <div>
+                      <strong className="text-slate-200">{t.charEngine1Title}</strong>: {t.charEngine1Desc}
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-[9px] mt-0.5 text-blue-400">⚡</span>
+                    <div>
+                      <strong className="text-slate-200">{t.charEngine2Title}</strong>: {t.charEngine2Desc}
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-[9px] mt-0.5 text-purple-400">🦅</span>
+                    <div>
+                      <strong className="text-slate-200">{t.charEngine3Title}</strong>: {t.charEngine3Desc}
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-[9px] mt-0.5 text-red-400">🔥</span>
+                    <div>
+                      <strong className="text-slate-200">{t.charEngine4Title}</strong>: {t.charEngine4Desc}
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
       {/* Footer Block */}
       <footer className="bg-slate-950 border-t border-slate-900/60 py-12 text-slate-500 text-xs text-left">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-6">
