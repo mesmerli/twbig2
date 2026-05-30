@@ -226,7 +226,7 @@ export default function App() {
             <a href="#challenges" className="text-[11px] xl:text-xs font-semibold tracking-normal xl:tracking-wider text-slate-300 hover:text-amber-400 transition-colors uppercase">{t.navChallenges}</a>
             <a href="#demo" className="text-[11px] xl:text-xs font-semibold tracking-normal xl:tracking-wider text-slate-300 hover:text-amber-400 transition-colors uppercase">{t.navDemo}</a>
             <a href="#leaderboard" className="text-[11px] xl:text-xs font-semibold tracking-normal xl:tracking-wider text-slate-300 hover:text-amber-400 transition-colors uppercase">{t.navLeaderboard}</a>
-            <a href="#tech" className="text-[11px] xl:text-xs font-semibold tracking-normal xl:tracking-wider text-slate-300 hover:text-amber-400 transition-colors uppercase">{t.navAlgorithm}</a>
+            <a href="#characters" className="text-[11px] xl:text-xs font-semibold tracking-normal xl:tracking-wider text-slate-300 hover:text-amber-400 transition-colors uppercase">{t.navAlgorithm}</a>
           </nav>
 
           <div className="hidden lg:flex items-center gap-2 xl:gap-3">
@@ -328,7 +328,7 @@ export default function App() {
               {t.navLeaderboard}
             </a>
             <a
-              href="#tech"
+              href="#characters"
               onClick={() => setMobileMenuOpen(false)}
               className="block text-sm text-slate-300 py-1"
             >
@@ -1082,91 +1082,6 @@ export default function App() {
 
             </div>
 
-          </div>
-
-        </div>
-      </section>
-
-      {/* GitHub Algorithm Deep-Dive Guidance Section */}
-      <section id="tech" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-900 scroll-mt-24">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch">
-          
-          <div className="lg:col-span-5 text-left flex flex-col justify-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full mb-5 w-fit">
-              <Layers size={14} className="text-amber-400" />
-              <span className="text-xs font-semibold text-amber-300 font-display">{t.techBadge}</span>
-            </div>
-
-            <h3 className="text-2xl sm:text-3xl font-display font-extrabold text-white mb-4">
-              {t.techTitle}
-            </h3>
-
-            <p className="text-slate-300 text-xs leading-relaxed mb-6">
-              {t.techDesc}{' '}
-              <a href="https://github.com/mesmerli/taiwan-big-two-ai" target="_blank" rel="noreferrer" className="text-amber-400 underline hover:text-amber-300 font-semibold inline-flex items-center gap-1">
-                <Github size={12} className="shrink-0 text-amber-400" />
-                mesmerli/taiwan-big-two-ai <ExternalLink size={10} />
-              </a>
-              {lang === 'en' ? ' open-source spirit. Extremely high-precision heuristics for Taiwanese-specific card weights.' : ' 的開源精神。針對台灣大老二多牌型組合的極限搜尋，實現了高精度推理。'}
-            </p>
-
-            <ul className="space-y-3 text-xs text-slate-400">
-              <li className="flex items-start gap-2.5">
-                <Check className="text-amber-400 flex-shrink-0 mt-0.5" size={14} />
-                <span>{t.techLi1}</span>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <Check className="text-amber-400 flex-shrink-0 mt-0.5" size={14} />
-                <span>{t.techLi2}</span>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <Check className="text-amber-400 flex-shrink-0 mt-0.5" size={14} />
-                <span>{t.techLi3}</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Technical code/diagram placeholder */}
-          <div className="lg:col-span-7 bg-slate-950 p-6 rounded-3xl border border-slate-800 font-mono text-[10px] md:text-[11px] text-slate-300 text-left overflow-x-auto shadow-2xl relative">
-            <div className="absolute top-3 right-4 flex gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-red-400/40" />
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-400/40" />
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400/40" />
-            </div>
-
-            <div className="text-slate-500 mb-2 border-b border-slate-900 pb-2">📂 @utils/bigTwoRules.ts - {lang === 'en' ? 'Core Rule Evaluation logic' : '核心決策精簡邏輯'}</div>
-            
-            <span className="text-indigo-400">export function</span> <span className="text-teal-400">evaluateHand</span>(cards: Card[]): PlayHand &#123;
-            <br />
-            &nbsp;&nbsp;<span className="text-indigo-400">const</span> len = cards.length;
-            <br />
-            &nbsp;&nbsp;<span className="text-indigo-400">if</span> (len === <span className="text-amber-400">1</span>) &#123;
-            <br />
-            &nbsp;&nbsp;&nbsp;&nbsp;<span className="text-indigo-400">return</span> &#123; type: <span className="text-emerald-400">'SINGLE'</span>, highestCardValue: cards[<span className="text-amber-400">0</span>].rank &#125;;
-            <br />
-            &nbsp;&nbsp;&#125;
-            <br />
-            &nbsp;&nbsp;<span className="text-indigo-400">if</span> (len === <span className="text-amber-400">2</span> &amp;&amp; cards[<span className="text-amber-400">0</span>].rank === cards[<span className="text-amber-400">1</span>].rank) &#123;
-            <br />
-            &nbsp;&nbsp;&nbsp;&nbsp;<span className="text-indigo-400">return</span> &#123; type: <span className="text-emerald-400">'PAIR'</span>, highestCardValue: cards[<span className="text-amber-400">0</span>].rank &#125;;
-            <br />
-            &nbsp;&nbsp;&#125;
-            <br />
-            &nbsp;&nbsp;<span className="text-indigo-400">if</span> (len === <span className="text-amber-400">5</span>) &#123;
-            <br />
-            &nbsp;&nbsp;&nbsp;&nbsp;<span className="text-slate-500">// Heuristical Five card combinations checker</span>
-            <br />
-            &nbsp;&nbsp;&nbsp;&nbsp;<span className="text-indigo-400">return</span> <span className="text-teal-400">analyzeFiveCards</span>(cards);
-            <br />
-            &nbsp;&nbsp;&#125;
-            <br />
-            &nbsp;&nbsp;<span className="text-indigo-400">return</span> &#123; type: <span className="text-emerald-400">'INVALID'</span> &#125;;
-            <br />
-            &#125;
-            
-            <div className="mt-4 text-amber-500 text-[10px] border-t border-slate-900 pt-3 font-semibold">
-              {t.techFooterNotice}
-            </div>
           </div>
 
         </div>
