@@ -1194,7 +1194,7 @@ export default function App() {
               <div>
                 <div className="flex items-center justify-between mb-3 border-b border-slate-800/50 pb-2">
                   <div className="flex items-center gap-2">
-                    <span className="text-xl">🧑💼</span>
+                    <span className="text-xl">🧔</span>
                     <h3 className="font-bold text-sm text-white font-display">{t.charAlexTitle}</h3>
                   </div>
                   <span className="text-[10px] text-blue-400 font-mono font-semibold bg-blue-500/10 px-2 py-0.5 rounded-full border border-blue-500/20">
@@ -1238,7 +1238,7 @@ export default function App() {
               <div>
                 <div className="flex items-center justify-between mb-3 border-b border-slate-800/50 pb-2">
                   <div className="flex items-center gap-2">
-                    <span className="text-xl">🧔</span>
+                    <span className="text-xl">🧑💼</span>
                     <h3 className="font-bold text-sm text-white font-display">{t.charChrisTitle}</h3>
                   </div>
                   <span className="text-[10px] text-rose-400 font-mono font-semibold bg-rose-500/10 px-2 py-0.5 rounded-full border border-rose-500/20">
