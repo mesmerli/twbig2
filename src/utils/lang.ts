@@ -52,7 +52,7 @@ export const TRANSLATIONS = {
     // Ms Store Section
     msCert: 'Microsoft Store 官方認證',
     msTitle: '取得 Windows 原生桌面版',
-    msDesc: '除了網頁免安裝直接遊玩，您現在也可以至微軟商店取得 Windows 專屬客戶端！商店定價為美金 $9.99 Base Price，但提供完整的 30 天免費流暢試玩體驗。享受流暢不受限的 120 FPS 幀率技術演繹、極致省電能耗、離線無王牌單機熱身模式，邀您即刻免費下載體驗！',
+    msDesc: '除了網頁免安裝直接遊玩，您現在也可以至微軟商店取得 Windows 專屬客戶端！商店定價為美金 $9.99 Base Price，但提供完整的 30 天免費流暢試玩體驗。邀您即刻免費下載體驗！',
     msBenefit1: '支援離線對決、單機練習',
     msBenefit2: '30天完整免費試玩體驗',
     msBenefit3: '一鍵安裝，後台極速啟動',
@@ -65,7 +65,7 @@ export const TRANSLATIONS = {
     // App.tsx Specific Microsoft Keys
     msStoreBannerTag: 'Microsoft Store 官方認證',
     msStoreBannerTitle: '取得 Windows 原生桌面版',
-    msStoreBannerDesc: '除了網頁免安裝直接遊玩，您現在也可以至微軟商店取得 Windows 專屬客戶端！商店定價為美金 $9.99 Base Price，但提供完整的 30 天免費流暢試玩體驗。享受流暢不受限的 120 FPS 幀率技術演繹、極致省電能耗、離線無王牌單機熱身模式，邀您即刻免費下載體驗！',
+    msStoreBannerDesc: '除了網頁免安裝直接遊玩，您現在也可以至微軟商店取得 Windows 專屬客戶端！商店定價為美金 $9.99 Base Price，但提供完整的 30 天免費流暢試玩體驗。邀您即刻免費下載體驗！',
     msStoreBannerBullet1: '支援離線對決、單機練習',
     msStoreBannerBullet2: '30天完整免費試玩體驗',
     msStoreBannerBullet3: '一鍵安裝，後台極速啟動',
@@ -349,7 +349,7 @@ export const TRANSLATIONS = {
     // Ms Store Section
     msCert: 'Microsoft Store Certified',
     msTitle: 'Get Native Windows App',
-    msDesc: 'Along with immediate zero-setup web trial, acquire our high-performance Windows Client on MS Store. Normally priced at $9.99 Base price, but it comes with a complete 30-Day Free Trial! Play at unlocked 120 FPS, maximum battery efficiency, and an offline practice simulator.',
+    msDesc: 'Along with immediate zero-setup web trial, acquire our high-performance Windows Client on MS Store. Normally priced at $9.99 Base price, but it comes with a complete 30-Day Free Trial! We invite you to download and experience it free now!',
     msBenefit1: 'Offline practice simulator',
     msBenefit2: 'Complete 30-day free trial',
     msBenefit3: 'Seamless background quick bootstrap',
@@ -362,7 +362,7 @@ export const TRANSLATIONS = {
     // App.tsx Specific Microsoft Keys
     msStoreBannerTag: 'Microsoft Store Certified',
     msStoreBannerTitle: 'Get Native Windows App',
-    msStoreBannerDesc: 'Along with immediate zero-setup web trial, acquire our high-performance Windows Client on MS Store. Normally priced at $9.99 Base price, but it comes with a complete 30-Day Free Trial! Play at unlocked 120 FPS, maximum battery efficiency, and offline practice simulator support.',
+    msStoreBannerDesc: 'Along with immediate zero-setup web trial, acquire our high-performance Windows Client on MS Store. Normally priced at $9.99 Base price, but it comes with a complete 30-Day Free Trial! We invite you to download and experience it free now!',
     msStoreBannerBullet1: 'Offline practice simulator',
     msStoreBannerBullet2: 'Complete 30-day free trial',
     msStoreBannerBullet3: 'Seamless background quick bootstrap',
