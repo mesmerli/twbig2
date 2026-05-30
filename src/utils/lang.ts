@@ -113,7 +113,7 @@ export const TRANSLATIONS = {
     localGameTag: '台北大同戰局區 (自研模擬引擎版)',
     officialGameTag: '遠端官方獨立主機：連線運作中',
     demoHeadline: '🎴 立刻線上切磋：智慧對決桌面',
-    demoSubDesc: '您可以切換遊玩「官網線上正式版」或體驗具備「每日殘局挑戰」的本地自研模擬桌！',
+    demoSubDesc: '免下載安裝，直接在瀏覽器中暢玩最深度的決策演算法台灣大老二！',
     puzzleModeActive: '⚡ 現正處於【{name}】殘局特訓模式',
     btnReturnToNormal: '切換回普通 AI 13張對戰',
     btnOfficialEdition: '🌐 AI 正式版線上試玩',
@@ -123,7 +123,7 @@ export const TRANSLATIONS = {
 
     // App.tsx Specific Demo Keys
     demoTitle: '🎴 立刻線上切磋：智慧對決桌面',
-    demoSubtitle: '您可以切換遊玩「官網線上正式版」或體驗具備「每日殘局挑戰」的本地自研模擬桌！',
+    demoSubtitle: '免下載安裝，直接在瀏覽器中暢玩最深度的決策演算法台灣大老二！',
     demoActiveChallengePrefix: '⚡ 現正處於【',
     demoActiveChallengeSuffix: '】殘局特訓模式',
     demoSwitchNormalPlay: '切換回普通 AI 13張對戰',
@@ -410,7 +410,7 @@ export const TRANSLATIONS = {
     localGameTag: 'Taipei Datong Arena (Web Simulator)',
     officialGameTag: 'Remote Pro Server: Live Connected',
     demoHeadline: '🎴 Play Now: Undergo Intelligence Duel',
-    demoSubDesc: 'Instantly toggle between the "Official Online Pro Edition" or solve daily challenges on our local web sandbox.',
+    demoSubDesc: 'No download required, play Taiwan Big Two online instantly with our advanced decision algorithms.',
     puzzleModeActive: '⚡ Active Puzzle Mode: [{name}]',
     btnReturnToNormal: 'Change Back to Standard 13-Card AI',
     btnOfficialEdition: '🌐 AI Pro Online Demo',
@@ -420,7 +420,7 @@ export const TRANSLATIONS = {
 
     // App.tsx Specific Demo Keys
     demoTitle: '🎴 Play Now: Undergo Intelligence Duel',
-    demoSubtitle: 'Instantly toggle between the "Official Online Pro Edition" or solve daily challenges on our local web sandbox.',
+    demoSubtitle: 'No download required, play Taiwan Big Two online instantly with our advanced decision algorithms.',
     demoActiveChallengePrefix: '⚡ Active Puzzle Mode: [',
     demoActiveChallengeSuffix: ']',
     demoSwitchNormalPlay: 'Change Back to Standard 13-Card AI',

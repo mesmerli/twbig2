@@ -23,9 +23,8 @@ import {
   Globe,
 } from 'lucide-react';
 
-import { Card, LeaderboardEntry, DailyChallenge } from './types';
-import { INITIAL_LEADERBOARD, DAILY_CHALLENGES, LOCAL_TITLES } from './data/mockData';
-import BigTwoGame from './components/BigTwoGame';
+import { LeaderboardEntry } from './types';
+import { INITIAL_LEADERBOARD, LOCAL_TITLES } from './data/mockData';
 import { TRANSLATIONS, Language } from './utils/lang';
 
 export default function App() {
@@ -73,13 +72,6 @@ export default function App() {
       }
     }
   }, [lang]);
-
-  // Play Mode: 'official' (the embedded website) or 'local' (hand puzzles / web trial React engine)
-  const [playMode, setPlayMode] = useState<'official' | 'local'>('official');
-
-  // Daily Challenge setup list
-  const [challenges, setChallenges] = useState<DailyChallenge[]>(DAILY_CHALLENGES);
-  const [activeChallengeId, setActiveChallengeId] = useState<string | null>(null);
 
   // Custom live sorting leaderboard
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
@@ -170,13 +162,6 @@ export default function App() {
     }
   };
 
-  // Callback when a challenge is computed fully
-  const handleChallengeComplete = (challengeId: string) => {
-    setChallenges((prev) =>
-      prev.map((ch) => (ch.id === challengeId ? { ...ch, isCompleted: true } : ch))
-    );
-  };
-
   const handleUpdateIdentity = (e: React.FormEvent) => {
     e.preventDefault();
     if (tempName.trim()) {
@@ -186,17 +171,12 @@ export default function App() {
   };
 
   // Quick helper to scroll to the game board area
-  const scrollToDemo = (mode?: 'official' | 'local') => {
-    if (mode) {
-      setPlayMode(mode);
-    }
+  const scrollToDemo = () => {
     const element = document.getElementById('demo-table');
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
-
-  const currentActiveChallengeObj = challenges.find((ch) => ch.id === activeChallengeId);
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-amber-500 selection:text-slate-950 relative">
@@ -223,9 +203,7 @@ export default function App() {
           <nav className="hidden lg:flex items-center gap-3 xl:gap-5">
             <a href="#features" className="text-[11px] xl:text-xs font-semibold tracking-normal xl:tracking-wider text-slate-300 hover:text-amber-400 transition-colors uppercase">{t.navFeatures}</a>
             <a href="#download" className="text-[11px] xl:text-xs font-semibold tracking-normal xl:tracking-wider text-sky-400 hover:text-amber-400 transition-colors uppercase">{t.navMsStore}</a>
-            <a href="#challenges" className="text-[11px] xl:text-xs font-semibold tracking-normal xl:tracking-wider text-slate-300 hover:text-amber-400 transition-colors uppercase">{t.navChallenges}</a>
             <a href="#demo" className="text-[11px] xl:text-xs font-semibold tracking-normal xl:tracking-wider text-slate-300 hover:text-amber-400 transition-colors uppercase">{t.navDemo}</a>
-            <a href="#leaderboard" className="text-[11px] xl:text-xs font-semibold tracking-normal xl:tracking-wider text-slate-300 hover:text-amber-400 transition-colors uppercase">{t.navLeaderboard}</a>
             <a href="#characters" className="text-[11px] xl:text-xs font-semibold tracking-normal xl:tracking-wider text-slate-300 hover:text-amber-400 transition-colors uppercase">{t.navAlgorithm}</a>
           </nav>
 
@@ -260,7 +238,7 @@ export default function App() {
               <Share2 size={14} />
             </button>
             <button
-              onClick={() => scrollToDemo('official')}
+              onClick={() => scrollToDemo()}
               className="bg-amber-500 hover:bg-amber-400 text-slate-950 px-5 py-2 rounded-full font-bold transition-all shadow-lg text-[11px] xl:text-xs cursor-pointer shrink-0"
             >
               {t.btnPlayNowHeader}
@@ -307,25 +285,11 @@ export default function App() {
               {t.navMsStore}
             </a>
             <a
-              href="#challenges"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block text-sm text-slate-300 py-1"
-            >
-              {t.navChallenges}
-            </a>
-            <a
               href="#demo"
               onClick={() => setMobileMenuOpen(false)}
               className="block text-sm text-slate-300 py-1"
             >
               {t.navDemo}
-            </a>
-            <a
-              href="#leaderboard"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block text-sm text-slate-300 py-1"
-            >
-              {t.navLeaderboard}
             </a>
             <a
               href="#characters"
@@ -363,7 +327,7 @@ export default function App() {
               <button
                 onClick={() => {
                   setMobileMenuOpen(false);
-                  scrollToDemo('official');
+                  scrollToDemo();
                 }}
                 className="w-full py-2 bg-amber-500 rounded-lg text-xs text-slate-950 font-bold"
               >
@@ -423,7 +387,7 @@ export default function App() {
               {/* Action buttons */}
               <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto flex-wrap">
                 <button
-                  onClick={() => scrollToDemo('official')}
+                  onClick={() => scrollToDemo()}
                   className="px-6 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs shadow-lg shadow-amber-500/10 hover:shadow-amber-500/20 active:scale-95 transition text-center cursor-pointer whitespace-nowrap"
                 >
                   {t.btnStartWebPlay}
@@ -661,100 +625,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* Daily Challenge Selector Grid Segment */}
-      <section id="challenges" className="py-16 bg-slate-950/40 border-b border-slate-900 scroll-mt-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-display font-extrabold text-white flex items-center gap-2">
-                {t.challengesTitle}
-              </h2>
-              <p className="text-slate-400 text-xs mt-1.5 leading-relaxed max-w-xl">
-                {t.challengesDesc}
-              </p>
-            </div>
-            
-            <div className="flex items-center gap-2 text-xs text-rose-400 font-mono bg-rose-500/5 px-3 py-1.5 rounded-lg border border-rose-500/15">
-              <span>{t.challengesAutoRefresh}</span>
-            </div>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {challenges.map((ch) => {
-              // Difficulty values can be translated based on difficulty dict mapping or direct static
-              const difficultyText = lang === 'en' 
-                ? (ch.difficulty === '簡單' ? 'Easy' : ch.difficulty === '中等' ? 'Medium' : 'Hard')
-                : ch.difficulty;
-
-              let difficultyClass = '';
-              if (ch.difficulty === '簡單') difficultyClass = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
-              if (ch.difficulty === '中等') difficultyClass = 'bg-amber-500/10 text-amber-400 border-amber-500/20';
-              if (ch.difficulty === '困難') difficultyClass = 'bg-red-500/10 text-red-400 border-red-500/20';
-
-              const isActive = activeChallengeId === ch.id;
-
-              return (
-                <div
-                  key={ch.id}
-                  className={`rounded-3xl p-6 border transition-all duration-300 flex flex-col justify-between ${
-                    isActive
-                      ? 'bg-slate-900 border-amber-500 shadow-[0_0_25px_rgba(245,158,11,0.15)] scale-[1.01]'
-                      : 'bg-slate-900/30 border-slate-800 hover:border-slate-700/80 hover:bg-slate-900/50'
-                  }`}
-                >
-                  <div>
-                    <div className="flex justify-between items-center mb-3">
-                      <span className={`text-[10px] px-2 py-0.5 rounded font-bold border ${difficultyClass}`}>
-                        {difficultyText}
-                      </span>
-                      {ch.isCompleted ? (
-                        <span className="text-[10px] text-emerald-400 flex items-center gap-1 font-semibold">
-                          <CheckCircle size={10} />
-                          {t.challengesStatusCompleted}
-                        </span>
-                      ) : (
-                        <span className="text-[10px] text-slate-500">
-                          {t.challengesStatusPending}
-                        </span>
-                      )}
-                    </div>
-
-                    <h3 className="font-bold text-base text-white font-sans mb-2">
-                      {lang === 'en' ? TRANSLATIONS.en.challengesData[ch.id as keyof typeof TRANSLATIONS.en.challengesData]?.title || ch.title : ch.title}
-                    </h3>
-
-                    <p className="text-slate-400 text-xs leading-relaxed mb-4 min-h-[64px]">
-                      {lang === 'en' ? TRANSLATIONS.en.challengesData[ch.id as keyof typeof TRANSLATIONS.en.challengesData]?.description || ch.description : ch.description}
-                    </p>
-                  </div>
-
-                  <div className="border-t border-slate-800/80 pt-4 mt-2 flex items-center justify-between">
-                    <span className="text-[10px] text-amber-500 font-mono font-semibold">
-                      {t.challengesScore} +150
-                    </span>
-
-                    <button
-                      onClick={() => {
-                        setActiveChallengeId(ch.id);
-                        scrollToDemo('local');
-                      }}
-                      className={`px-4 py-1.5 rounded-full text-xs font-bold cursor-pointer transition-all duration-300 ${
-                        isActive
-                          ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/10 hover:bg-amber-400'
-                          : 'bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white'
-                      }`}
-                    >
-                      {isActive ? t.challengesActionActive : t.challengesActionStart}
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-        </div>
-      </section>
 
       {/* Playable Game Area with custom layout anchor */}
       <section id="demo" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative scroll-mt-24">
@@ -767,55 +638,6 @@ export default function App() {
           <p className="text-xs text-slate-400 mt-2">
             {t.demoSubtitle}
           </p>
-          
-          {activeChallengeId && (
-            <div className="inline-flex items-center gap-3.5 px-4 py-1.5 bg-amber-500/10 border border-amber-500/20 text-amber-300 rounded-full text-xs font-medium mt-4 font-sans">
-              <span>{t.demoActiveChallengePrefix}{lang === 'en' ? TRANSLATIONS.en.challengesData[activeChallengeId as keyof typeof TRANSLATIONS.en.challengesData]?.title || currentActiveChallengeObj?.title : currentActiveChallengeObj?.title}{t.demoActiveChallengeSuffix}</span>
-              <button
-                onClick={() => {
-                  setActiveChallengeId(null);
-                  setPlayMode('local');
-                }}
-                className="underline hover:text-white cursor-pointer ml-1 font-bold text-[11px]"
-              >
-                {t.demoSwitchNormalPlay}
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Play Action Mode Selector */}
-        <div className="flex justify-center mb-8">
-          <div className="bg-slate-900 border border-slate-800 p-1 w-fit rounded-2xl flex items-center gap-1">
-            <button
-              onClick={() => setPlayMode('official')}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                playMode === 'official'
-                  ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-md'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <span>{t.demoModeOfficial}</span>
-              {playMode === 'official' && (
-                <span className="px-1.5 py-0.5 rounded bg-slate-950 text-[10px] text-amber-400 font-bold font-mono">
-                  PRO
-                </span>
-              )}
-            </button>
-            <button
-              onClick={() => setPlayMode('local')}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                playMode === 'local'
-                  ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-md'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <span>{t.demoModeLocal}</span>
-              {activeChallengeId && (
-                <span className="w-2 h-2 bg-red-500 rounded-full animate-ping" />
-              )}
-            </button>
-          </div>
         </div>
 
         {/* Live game client render */}
@@ -823,269 +645,41 @@ export default function App() {
           <div className="absolute top-3 left-6 flex items-center gap-2 z-20 bg-slate-900/90 px-2.5 py-1 rounded-full border border-slate-850">
             <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
             <span className="text-[10px] text-slate-300 font-mono tracking-wider">
-              {playMode === 'official' ? t.demoStatusOfficial : t.demoStatusLocal}
+              {t.demoStatusOfficial}
             </span>
           </div>
 
-          <AnimatePresence mode="wait">
-            {playMode === 'official' ? (
-              <motion.div
-                key="official-game"
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -15 }}
-                transition={{ duration: 0.3 }}
-                className="w-full pt-10"
-              >
-                <div className="p-1 md:p-2">
-                  <iframe
-                    src="https://mesmerli.github.io/taiwan-big-two-ai/"
-                    title="台灣大老二 AI 官方網頁版"
-                    className="w-full h-[650px] md:h-[780px] border-0 rounded-2xl bg-[#0b0f19] shadow-inner"
-                    allow="fullscreen; autoplay"
-                    sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
-                  />
-                  {/* Embedded Helper Bar */}
-                  <div className="mt-3.5 px-4 py-2.5 bg-slate-950/85 border border-slate-800/80 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-slate-400">
-                    <span className="flex items-center gap-2">
-                      <Zap size={14} className="text-amber-400 flex-shrink-0 animate-pulse" />
-                      <span>{t.iframeSandboxNotice}</span>
-                    </span>
-                    <a
-                      href="https://mesmerli.github.io/taiwan-big-two-ai/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-amber-450 hover:text-amber-400 font-bold transition hover:underline flex items-center gap-1 whitespace-nowrap"
-                    >
-                      {t.iframeFullWidthBtn} <ExternalLink size={12} />
-                    </a>
-                  </div>
-                </div>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="local-game"
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -15 }}
-                transition={{ duration: 0.3 }}
-                className="w-full pt-10"
-              >
-                <BigTwoGame
-                  userDisplayName={userDisplayName}
-                  userTitle={userTitle}
-                  userScore={userScore}
-                  onGameWin={handleGameWin}
-                  dailyChallengeActiveId={activeChallengeId}
-                  onChallengeComplete={handleChallengeComplete}
-                  currentLanguage={lang}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-      </section>
-
-      {/* Leaderboard & Player setup configuration (Satisfies interconnected requirements) */}
-      <section id="leaderboard" className="py-16 bg-slate-950/60 border-t border-slate-900 scroll-mt-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
-            
-            {/* Left Col: Setup your game character with localized properties */}
-            <div className="lg:col-span-1 bg-slate-900 border border-slate-800 p-6 rounded-3xl shadow-xl relative overflow-hidden flex flex-col justify-between">
-              <div>
-                <div className="flex items-center gap-2 pb-3 mb-4 border-b border-slate-800/80">
-                  <Smartphone className="text-amber-500" size={18} />
-                  <h3 className="font-bold text-base text-white">{t.custTitle}</h3>
-                </div>
-
-                <form onSubmit={handleUpdateIdentity} className="space-y-4">
-                  <div>
-                    <label className="block text-xs text-slate-400 font-medium mb-1.5">{t.custLabelNickname}</label>
-                    <input
-                      type="text"
-                      value={tempName}
-                      onChange={(e) => setTempName(e.target.value)}
-                      maxLength={10}
-                      placeholder={t.custPlaceholder}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500 text-left"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs text-slate-400 font-medium mb-1.5">{t.custLabelTitle}</label>
-                    <select
-                      value={selectedLocalTitle}
-                      onChange={(e) => setSelectedLocalTitle(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500 text-left"
-                    >
-                      {LOCAL_TITLES.map((tVal, idx) => {
-                        const tTranslated = lang === 'en'
-                          ? (tVal === '萬華牌局一陣風' ? 'Wanhua Wind Rider'
-                             : tVal === '大安炒牌大宗師' ? 'Daan Shuffler Grandmaster'
-                             : tVal === '板橋鐵支狂熱者' ? 'Banqiao Quad Lover'
-                             : tVal === '信義梭哈黃金右手' ? 'Xinyi Golden Hand'
-                             : tVal)
-                          : tVal;
-                        return (
-                          <option key={idx} value={tVal}>
-                            {tTranslated}
-                          </option>
-                        );
-                      })}
-                    </select>
-                  </div>
-
-                  <div className="bg-amber-500/5 p-3.5 rounded-xl border border-amber-500/10 text-[11px] text-slate-300 leading-relaxed font-sans">
-                    🏆 <span className="font-bold text-amber-400">{t.custScoreText}：{userScore}</span>
-                    <br />
-                    {t.custDescText}
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full py-2.5 bg-amber-500 text-slate-950 text-xs font-bold rounded-full cursor-pointer hover:bg-amber-400 transition-all font-sans active:scale-95 shadow-md shadow-amber-500/10"
-                  >
-                    {t.custConfirmBtn}
-                  </button>
-                </form>
+          <div className="w-full pt-10">
+            <div className="p-1 md:p-2">
+              <iframe
+                src="https://mesmerli.github.io/taiwan-big-two-ai/"
+                title="台灣大老二 AI 官方網頁版"
+                className="w-full h-[650px] md:h-[780px] border-0 rounded-2xl bg-[#0b0f19] shadow-inner"
+                allow="fullscreen; autoplay"
+                sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+              />
+              {/* Embedded Helper Bar */}
+              <div className="mt-3.5 px-4 py-2.5 bg-slate-950/85 border border-slate-800/80 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-slate-400">
+                <span className="flex items-center gap-2">
+                  <Zap size={14} className="text-amber-400 flex-shrink-0 animate-pulse" />
+                  <span>{t.iframeSandboxNotice}</span>
+                </span>
+                <a
+                  href="https://mesmerli.github.io/taiwan-big-two-ai/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-amber-450 hover:text-amber-400 font-bold transition hover:underline flex items-center gap-1 whitespace-nowrap"
+                >
+                  {t.iframeFullWidthBtn} <ExternalLink size={12} />
+                </a>
               </div>
             </div>
-
-            {/* Right Col: Leaderboard widget (takes 3 cols space) */}
-            <div className="lg:col-span-3 bg-slate-900 border border-slate-800 p-6 rounded-3xl shadow-2xl relative overflow-hidden">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-800/80 pb-4 mb-4 gap-2">
-                <div>
-                  <h3 className="font-bold text-lg text-white font-display flex items-center gap-1.5 whitespace-nowrap overflow-hidden text-ellipsis">
-                    {t.leaderboardTitle}
-                  </h3>
-                  <p className="text-slate-400 text-xs mt-0.5">
-                    {t.leaderboardDesc}
-                  </p>
-                </div>
-                
-                <div className="text-[10px] text-amber-400 font-mono bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20 whitespace-nowrap">
-                  {t.leaderboardStatus}
-                </div>
-              </div>
-
-              {/* Leaderboard tables grid */}
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs text-slate-300">
-                  <thead>
-                    <tr className="border-b border-slate-800 text-slate-400 uppercase tracking-wider text-[10px] font-mono">
-                      <th className="py-2.5 px-2">{t.leaderboardThRank}</th>
-                      <th className="py-2.5 px-3">{t.leaderboardThName}</th>
-                      <th className="py-2.5 px-3">{t.leaderboardThTitle}</th>
-                      <th className="py-2.5 px-3 text-right">{t.leaderboardThRecord}</th>
-                      <th className="py-2.5 px-3 text-right">{t.leaderboardThScore}</th>
-                      <th className="py-2.5 px-3 min-w-[120px]">{t.leaderboardThMedals}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {leaderboard.map((player) => {
-                      const isMe = player.name.includes('(你)') || player.name.includes('(You)');
-                      let rankBg = 'text-slate-400';
-                      if (player.rank === 1) rankBg = 'text-amber-400 font-bold';
-                      if (player.rank === 2) rankBg = 'text-slate-300 font-bold';
-                      if (player.rank === 3) rankBg = 'text-amber-600 font-bold';
-
-                      // Translate name (You)
-                      let playerName = player.name;
-                      if (isMe) {
-                        playerName = lang === 'en' ? `${userDisplayName} (You)` : `${userDisplayName} (你)`;
-                      } else {
-                        // Translate player names / titles in English leaderboard beautifully
-                        if (lang === 'en') {
-                          playerName = playerName
-                            .replace('三重福龍', 'Sanchong Fortune Dragon')
-                            .replace('基隆王爺牌客', 'Keelung Royal Cardmaster')
-                            .replace('北投順子狂人', 'Beitou Straight Fanatic')
-                            .replace('台中鐵八牌神', 'Taichung Quad God')
-                            .replace('台南連環神算', 'Tainan Combo Calculator')
-                            .replace('高雄絕情老二', 'Kaohsiung Ace Ruler');
-                        }
-                      }
-
-                      // Translate static titles
-                      let playerTitle = player.title;
-                      if (lang === 'en') {
-                        playerTitle = playerTitle
-                          .replace('東區大老二至尊', 'Eastern Sovereign')
-                          .replace('蘆洲葫蘆至尊', 'Luzhou FullHouse Lord')
-                          .replace('九份鐵支神捕', 'Jiufen Quad Hunter')
-                          .replace('士林順子狂殺手', 'Shilin Straight Slasher')
-                          .replace('萬華牌局一陣風', 'Wanhua Wind Rider')
-                          .replace('大安炒牌大宗師', 'Daan Shuffler Grandmaster')
-                          .replace('板橋鐵支狂熱者', 'Banqiao Quad Lover')
-                          .replace('信義梭哈黃金右手', 'Xinyi Golden Hand');
-                      }
-
-                      // Translate medals
-                      const translatedMedals = player.recentMedals.map(m => {
-                        if (lang === 'en') {
-                          return m
-                            .replace('🔥 當日挑戰獲勝者', '🔥 Daily Champ')
-                            .replace('🍀 運氣爆棚', '🍀 Blessed Luck')
-                            .replace('🧠 完美心流推理', '🧠 Perfect Focus')
-                            .replace('⚡ 高速破局先鋒', '⚡ Blitz Solver')
-                            .replace('💎 絕地葫蘆大逆轉', '💎 FullHouse Reversal')
-                            .replace('🛡️ 防撞大師十連勝', '🛡️ Defend Grandmaster');
-                        }
-                        return m;
-                      });
-
-                      return (
-                        <tr
-                          key={player.rank}
-                          className={`border-b border-slate-800/40 transition-colors ${
-                            isMe ? 'bg-amber-500/5 text-amber-200 font-semibold border-l-2 border-l-amber-500' : 'hover:bg-slate-900/40'
-                          }`}
-                        >
-                          <td className="py-3 px-2">
-                            <span className="flex items-center justify-center w-5 h-5 rounded-full bg-slate-950 text-[10px] font-mono">
-                              {player.rank}
-                            </span>
-                          </td>
-                          <td className="py-3 px-3 font-medium flex items-center gap-1">
-                            {isMe ? '👤 ' : ''}
-                            {playerName}
-                          </td>
-                          <td className="py-3 px-3 text-slate-400 text-[11px]">{playerTitle}</td>
-                          <td className="py-3 px-3 text-right text-slate-400">
-                            {player.winCount} {lang === 'en' ? 'W' : '勝'} / {player.playCount} {lang === 'en' ? 'G' : '局'}
-                          </td>
-                          <td className="py-3 px-3 text-right font-mono font-bold text-amber-400">
-                            {player.score.toLocaleString()}
-                          </td>
-                          <td className="py-3 px-3 text-slate-400 text-[10px]">
-                            <div className="flex flex-wrap gap-1">
-                              {translatedMedals.length === 0 ? (
-                                <span className="text-slate-600">-</span>
-                              ) : (
-                                translatedMedals.map((medal, idx) => (
-                                  <span key={idx} className="bg-slate-950 px-1.5 py-0.5 rounded text-[10px] whitespace-nowrap">
-                                    {medal}
-                                  </span>
-                                ))
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-
-            </div>
-
           </div>
-
         </div>
+
       </section>
+
+      
 
       {/* AI Opponent Characters Section (Traditional Heuristics & LLM Personas) */}
       <section id="characters" className="py-12 bg-slate-900/30 border-t border-slate-900 scroll-mt-24">
