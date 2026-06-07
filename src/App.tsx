@@ -21,6 +21,7 @@ import {
   Download,
   Share2,
   Globe,
+  Coffee,
 } from 'lucide-react';
 
 import { LeaderboardEntry } from './types';
@@ -222,6 +223,15 @@ export default function App() {
               </span>
               {t.btnMsStoreDownload}
             </a>
+            <a
+              href="https://ko-fi.com/mesmerli"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center p-2.5 rounded-full bg-slate-800/80 hover:bg-slate-700/80 text-rose-400 hover:text-[#FF5E5B] border border-slate-700 hover:border-slate-600 transition cursor-pointer"
+              title={lang === 'zh' ? '贊助支持 Ko-fi' : 'Support on Ko-fi'}
+            >
+              <Coffee size={14} className="text-[#FF5E5B]" />
+            </a>
             <button
               onClick={toggleLanguage}
               className="flex items-center justify-center p-2.5 rounded-full bg-slate-800/80 hover:bg-slate-700/80 text-slate-200 hover:text-amber-400 border border-slate-700 hover:border-slate-600 transition cursor-pointer"
@@ -247,6 +257,15 @@ export default function App() {
 
           {/* Mobile menu triggers */}
           <div className="flex lg:hidden items-center gap-2">
+            <a
+              href="https://ko-fi.com/mesmerli"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center p-2 rounded-full bg-slate-800/80 text-rose-400 border border-slate-700 text-[10px] font-bold"
+              title={lang === 'zh' ? '贊助支持 Ko-fi' : 'Support on Ko-fi'}
+            >
+              <Coffee size={14} className="text-[#FF5E5B]" />
+            </a>
             <button
               onClick={toggleLanguage}
               className="flex items-center justify-center p-2 rounded-full bg-slate-800/80 text-slate-200 border border-slate-700 text-[10px] font-bold"
@@ -312,6 +331,16 @@ export default function App() {
                   <span className="bg-[#ffb900] rounded-[0.5px]" />
                 </span>
                 {t.btnMsStoreDownload}
+              </a>
+              <a
+                href="https://ko-fi.com/mesmerli"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-center gap-2 px-3 py-2 bg-[#FF5E5B]/10 hover:bg-[#FF5E5B]/20 border border-[#FF5E5B]/20 rounded-lg text-xs text-rose-300 font-semibold cursor-pointer transition-colors"
+              >
+                <Coffee size={14} className="text-[#FF5E5B]" />
+                {lang === 'zh' ? '贊助支持 Ko-fi' : 'Support on Ko-fi'}
               </a>
               <button
                 id="mobile-share-btn"
