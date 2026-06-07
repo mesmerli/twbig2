@@ -22,6 +22,7 @@ import {
   Share2,
   Globe,
   Coffee,
+  BookOpen,
 } from 'lucide-react';
 
 import { LeaderboardEntry } from './types';
@@ -878,6 +879,36 @@ export default function App() {
 
           </div>
 
+        </div>
+      </section>
+
+      {/* Tutorials Strategy Guide Section */}
+      <section id="tutorials" className="py-12 bg-gradient-to-b from-slate-950 to-slate-900 border-t border-slate-900 scroll-mt-24 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(245,158,11,0.03),transparent_50%)] pointer-events-none" />
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+          <a
+            href="https://mesmerli.github.io/twbig2tutorials/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block group max-w-3xl mx-auto transition-transform duration-300 hover:scale-[1.02] cursor-pointer"
+          >
+            <div className="flex flex-col items-center">
+              <h2 className="text-2xl sm:text-3xl font-display font-extrabold text-white flex items-center justify-center gap-2">
+                <span className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 bg-clip-text text-transparent group-hover:from-amber-300 group-hover:via-amber-400 group-hover:to-orange-400 transition-all">
+                  {t.tutorialsTitle}
+                </span>
+                <ExternalLink size={20} className="text-amber-500 group-hover:text-amber-400 transition-colors flex-shrink-0" />
+              </h2>
+              <p className="text-xs text-slate-400 mt-2.5 leading-relaxed max-w-2xl group-hover:text-slate-300 transition-colors">
+                {t.tutorialsSubtitle}
+              </p>
+              <div className="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-[11px] font-semibold text-amber-450 group-hover:bg-amber-500/20 group-hover:border-amber-500/30 transition-all">
+                <BookOpen size={12} className="animate-pulse" />
+                {lang === 'zh' ? '前往閱讀完整指南' : 'Read Full Guide Portal'}
+              </div>
+            </div>
+          </a>
         </div>
       </section>
 

@@ -272,6 +272,8 @@ export const TRANSLATIONS = {
     // Character profiles keys
     charSectionTitle: 'AI 角色戰術指南',
     charSectionSubtitle: '洞悉傳統電腦與大語言模型 AI 的獨特個性與出牌邏輯，助您百戰百勝！',
+    tutorialsTitle: '大老二戰術攻略與教學',
+    tutorialsSubtitle: '由精深撲克大師撰寫的高效牌局剖析與獨家防範公式，帶您秒懂神級決策路徑！',
     charTypeHeuristic: '基礎電腦玩家 (Traditional Heuristic AIs)',
     charTypeLlm: '進階大語言模型玩家 (LLM-Powered AIs)',
     charEngineTitle: '🔄 LLM 角色動態人格引擎 (Persona Engine)',
@@ -569,6 +571,8 @@ export const TRANSLATIONS = {
     // Character profiles keys
     charSectionTitle: 'AI Character Profiles',
     charSectionSubtitle: 'Understand the distinct personality, leading patterns, and tactical logic of each AI player!',
+    tutorialsTitle: 'Big Two Tactics & Tutorials',
+    tutorialsSubtitle: 'In-depth poker matching breakdowns and expert guide systems to boost your defensive play mechanics!',
     charTypeHeuristic: 'Heuristic-Driven AIs',
     charTypeLlm: 'LLM-Powered Expert AIs',
     charEngineTitle: '🔄 LLM Characters Dynamic Persona Engine',
